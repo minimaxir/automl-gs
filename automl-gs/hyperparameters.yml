@@ -1,0 +1,131 @@
+# Hyperparameters shared by all model frameworks
+
+base:
+  base_lr:   # base learning rate for the model optimizer
+    type: base
+    hyperparams:
+      - !!float 1e-2
+      - !!float 1e-3
+      - !!float 1e-4
+  numeric_strat:   # strategy for handling numeric inputs
+    type: numeric
+    hyperparams:
+      - minmax   # scales the numeric value to [0,1] w/ MinMaxScaler
+      - standard   # scales using StandardScaler
+      - quantiles   # splits the field into 4 quantile buckets for binary-encoding
+      - percentiles   # splits the field into 10 percentile buckets for binary-encoding
+  datetime_month:   # include categorical month when encoding datetimes
+    type: datetime
+    hyperparams:
+      - True
+      - False
+  datetime_year:   # include categorical year when encoding datetimes
+    type: datetime
+    hyperparams:
+      - True
+      - False
+  datetime_holiday:   # include categorical holiday when encoding datetimes
+    type: datetime
+    hyperparams:
+      - True
+      - False
+  categorical_strat:   # strategy for handling categorical inputs
+    type: categorical
+    hyperparams:
+      - all_binary   # encodes all levels with binary-encoding
+      - top_10perc   # encodes top 10% of levels, encodes rest as "other"
+      - top_50perc   # encodes top 50% of levels, encodes rest as "other"
+
+# TensorFlow-only hyperparameters
+
+tensorflow:
+  weight_decay:   # AdamW Weight Decay
+    type: base
+    hyperparams:
+      - !!float 5e-2
+      - !!float 25e-3
+      - !!float 1e-2
+  batch_size:   # training batch size
+    type: base
+    hyperparams:
+      - 64
+      - 128
+      - 256
+  text_max_words:   # maximum number of input words to use for text
+    type: text
+    hyperparams:
+      - 10
+      - 20
+      - 40
+  text_dropout:   # input text dropout for text-encoding
+    type: text
+    hyperparams:
+      - 0.0
+      - 0.2
+      - 0.5
+  text_rnn_type:   # type of RNN for text-encoding
+    type: text
+    hyperparams:
+      - LSTM
+      - GRU
+  text_rnn_size:   # size of RNN for text-encoding
+    type: text
+    hyperparams:
+      - 32
+      - 64
+      - 128
+  mlp_blocks:   # number of MLP blocks after feature concatenation
+    type: base
+    hyperparams:
+      - 2
+      - 4
+      - 6
+  mlp_first_size:   # size of the first Dense layer in the MLP blocks
+    type: base
+    hyperparams:
+      - 64
+      - 128
+      - 256
+  mlp_size:   # size of the Dense layers in the MLP blocks
+    type: base
+    hyperparams:
+      - 64
+      - 128
+      - 256
+  mlp_dropout:   # dropout of the Dense layers in the MLP blocks
+    type: base
+    hyperparams:
+      - 0.0
+      - 0.2
+      - 0.5
+  mlp_activation:   # activation function for Dense layers in the MLP blocks
+    type: base
+    hyperparams:
+      - relu
+      - selu
+  mlp_regularizer:   # l2 regularization value for Dense layers in the MLP blocks
+    type: base
+    hyperparams:
+      - !!null None
+      - l2(1e-2)
+      - l2(1e-3)
+  output_regularizer:   # l2 regularization value for the final output layer
+    type: base
+    hyperparams:
+      - !!null None
+      - l2(1e-2)
+      - l2(1e-3)
+  reg_objective:   # regression objective for the model (can differ from experiment objective)
+    type: regression
+    hyperparams:
+      - mse
+      - msle
+      - poisson
+
+# xgboost-only hyperparameters
+
+xgboost:
+  max_depth:   # maximum depth of tree
+    - 3
+    - 5
+    - 7

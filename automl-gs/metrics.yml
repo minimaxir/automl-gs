@@ -1,0 +1,70 @@
+# `full_name`, `abbr`, and `format` affect metric display in visualizations
+# `objective` specifies which direction to go for optimization.
+
+regression:
+  ['mse', 'mae', 'msle',
+  'poisson', 'r_2']
+binary:
+  ['binary_crossentropy', 'accuracy', 'precision', 'recall',
+  'f1', 'auc']
+categorical:
+  ['categorical_crossentropy', 'accuracy', 'precision', 'recall',
+  'f1', 'auc']
+
+# Regression Metrics
+
+mse:
+  full_name: Mean Squared Error
+  abbr: MSE
+  objective: min
+mae:
+  full_name: Mean Absolute Error
+  abbr: MAE
+  objective: min
+msle:
+  full_name: Mean Squared Logarithmic Error
+  abbr: MSLE
+  objective: min
+poisson:
+  full_name: Poisson Loss
+  abbr: Poisson Loss
+  objective: min
+r_2:
+  full_name: R²
+  abbr: R²
+  objective: max
+
+# Binary/Classification Metrics
+
+categorical_crossentropy:
+  full_name: Categorical Loss
+  abbr: Categorical Loss
+  objective: min
+binary_crossentropy:
+  full_name: Binary Loss
+  abbr: Binary Loss
+  objective: min
+accuracy:
+  full_name: Accuracy
+  abbr: Accuracy
+  objective: max
+  format: percent
+precision:
+  full_name: Precision
+  abbr: Precision
+  objective: max
+  format: percent
+recall:
+  full_name: Recall
+  abbr: Recall
+  objective: max
+  format: percent
+f1:
+  full_name: F1 Score
+  abbr: F1
+  objective: max
+  format: percent
+auc:
+  full_name: Area Under the ROC
+  abbr: ROC AUC
+  objective: max

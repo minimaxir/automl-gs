@@ -1,0 +1,9 @@
+scikit-learn
+pandas
+{% if framework == 'tensorflow' %}
+tensorflow>=1.12
+hdf5
+{% endif %}
+{% if framework == 'xgboost' %}
+xgboost
+{% endif %}

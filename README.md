@@ -1,6 +1,6 @@
 # automl-gs
 
-Give an input CSV file and a variable you want to predict to automl-gs, and get a trained high-performing statistical model plus well-documented customized code allowing you to integrate the model into any prediction workflow.
+Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing statistical model plus well-documented customized code allowing you to integrate that model into any prediction workflow.
 
 Nowadays, the cost of computing many different models and hyperparameters is much lower than the oppertunity cost of an data scientist's time. automl-gs is a Python 3 module designed to abstract away the common approaches to transforming tabular data, architecting machine learning/deep learning models, and performing random hyperparameter searches to identify the best model. This allows data scientists and researchers to better utilize their time on performance optimization.
 
@@ -56,6 +56,7 @@ The best model Python script is kept after each trial, which can then easily be 
 * Localization (for generated code comments)
 * TensorBoard support?
 * Tool for generating a Flask/Starlette REST API from a trained model script
+* Secondary progress bars for epoch progress in each trial.
 
 ## Maintainer/Creator
 

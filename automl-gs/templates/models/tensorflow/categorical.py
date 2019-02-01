@@ -1,0 +1,1 @@
+input_{{ field }} = Input(shape=(7,), name='input_{{ field }}')
