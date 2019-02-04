@@ -25,12 +25,10 @@ if __name__ == '__main__':
     {# TensorFlow builds the model and loads weights. #}
     model = build_model()
 
-    if args.mode == 'predict':
-        model.load_weights('model_weights.hdf5')
-
-
     if args.mode == 'train':
         model_train(data_tf, model)
     elif args.mode == 'predict':
-        predictions = model_predict(data_tf, model)
+        model.load_weights('model_weights.hdf5')
+        encoders = load_encoders()
+        predictions = model_predict(data_tf, model, encoders)
         pd.DataFrame(predictions).to_csv('predictions.csv', index=False)

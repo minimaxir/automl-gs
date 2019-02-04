@@ -67,6 +67,18 @@ def load_encoders():
         encoders: A dict of encoder objects.
     """
 
+    encoders = {}
+    {% if 'text' in params.values() %}
+    {% include 'loaders/' ~ framework ~ '-text.py' %}
+    {% endif %}
+
+    {% for field, field_type in params %}
+        {% if field_type != 'text' %}
+        {% include 'loaders/' ~ field_type ~ '.py' %}
+        {% endif %}
+    {% endfor %}
+    return encoders
+
 def process_data(df):
     """Processes an input DataFrame into a format
     sutable for model prediction.
