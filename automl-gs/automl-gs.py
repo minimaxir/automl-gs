@@ -10,7 +10,7 @@ import uuid
 from utils_automl import *
 
 
-def automl_grid_search(csv_path, target_field, problem_type,
+def automl_grid_search(csv_path, target_field,
                        model_name='automl',
                        framework='tensorflow',
                        context='standalone',
@@ -30,7 +30,7 @@ env = Environment(
 df = pd.read_csv(csv_path)
 
 problem_type, target_metric, direction = get_problem_config(
-    df['target_field'], **kwargs)
+    df[target_field], **kwargs)
 hp_grid = build_hp_grid(framework, input_types, num_trials)
 
 fields_norm = normalize_col_names(df)
@@ -77,7 +77,7 @@ for hps in pbar:
         if is_imp:
             shutil.copytree(train_folder, "{}_best".format(train_folder))
 
-    # Clean up the generated file folder.
+    # Clean up the generated file folder for the next trial.
     shutil.rmtree(train_folder)
 
 

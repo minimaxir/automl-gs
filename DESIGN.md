@@ -1,6 +1,6 @@
-# Design
+# Design Notes
 
-A few notes on why some of the architecture decisions in the app are made.
+A few notes on why some of the (potentially counterintuitive) architectural and technical decisions in the app are made.
 
 ## Overall
 
@@ -17,6 +17,10 @@ A few notes on why some of the architecture decisions in the app are made.
 * `id`/`uuid` fields are iignored since there is zero statistical insight to gain from their values (if the order when rows are created is important, a `created_at` Datetime field will capture that).
 * `dayofweek` and `hour` are *always* extracted for datetime fields. `month` and `year` have a possiblity of overfitting in combination with `dayofweek`/`hour`, which is why they are tuned.
 * Multiple input text fields will always use the same encoder / shared model architecture for efficiency.
+
+## Data Analysis
+
+* In addition to the targeted performance metric, all common metrics for the given problem type are also collected. This may sound excessive, but it's better to be safe than sorry, and the extra metrics can be used as a sanity check.
 
 ## Model Training
 

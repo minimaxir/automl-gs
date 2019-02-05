@@ -120,6 +120,7 @@ tensorflow:
     hyperparams:
       - mse
       - msle
+      - mape
       - poisson
 
 # xgboost-only hyperparameters

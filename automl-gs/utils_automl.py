@@ -12,6 +12,8 @@ def get_input_types(df, col_types):
     """Get the input types for each field in the DataFrame that corresponds
     to an input type to be fed into the model.
 
+    Valid values are ['text', 'categorical', 'numeric', 'datetime', 'ignore']
+
     # Arguments:
         df: A pandas DataFrame.
         col_types: A dict of explicitly defined {field_name: type} mappings.
@@ -70,9 +72,11 @@ def get_input_types(df, col_types):
         else:
             field_types[field] = 'categorical'
 
-    # Print to console for debugging
-    print("Modeling with column specification:")
+    # Print to console for user-level debugging
+    print("Modeling with column specifications:")
     print("\n".join(["{}: {}".format(k, v) for k, v in field_types]))
+
+    field_types = {k:v if v != 'ignore' for k, v in field_types.items()}
 
     return field_types
 
@@ -153,7 +157,7 @@ def render_model(hps, model_name, framework):
 
 
 def render_model(hps, model_name, framework):
-    """Renders and saves the pipeline.py script for the given hyperparameters.
+    """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
 
 
@@ -199,21 +203,16 @@ def get_problem_config(target_data, **kwargs):
 
     direction = metrics[target_metric]['objective']
 
-    # Print variables to console for debugging.
+    # Print variables to console for user-level debugging.
     print("Solving a {} problem, optimizing {}.".format(problem_type))
 
     return problem_type, target_metric, direction
-
-def create_trial_id(hps):
-    """Create a unique ID for a trial by hashing the hyperparameters.
-
-    """
 
 def build_subprocess_cmd(csv_path, train_folder):
     """Builds the command used to call a subprocess for model training.
 
     Other parameters like split and num_epochs are not passed
-    since they are defaults.
+    since they are defaulted in the generated code.
     """
 
     return ["cd", "/{}".format(train_folder), "&&",
