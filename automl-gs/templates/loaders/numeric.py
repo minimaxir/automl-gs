@@ -1,9 +1,9 @@
 {% if params['numeric_strat'] == 'minmax' %}
-{{ field }}_scaler = MinMaxScaler()
+{{ field }}_encoder = MinMaxScaler()
 {% endif % }
 
 {% if params['numeric_strat'] == 'standard' %}
-{{ field }}_scaler = StandardScaler()
+{{ field }}_encoder = StandardScaler()
 {% endif %}
 
 {% if params['numeric_strat'] == 'quantiles' %}
@@ -17,13 +17,13 @@
 {% endif %}
 
 {% if params['numeric_strat'] in ['minmax', 'standard'] %}
-with open('{{ field }}_scale.json', 'r', encoding='utf8', errors='ignore') as infile:
-    {{ field }}_scaler._attrs = json.load(infile)
-encoders['{{ field }}_scaler'] = {{ field }}_scaler
+with open('{{ field }}_encoder.json', 'r', encoding='utf8', errors='ignore') as infile:
+    {{ field }}_encoder._attrs = json.load(infile)
+encoders['{{ field }}_encoderr'] = {{ field }}_encoder
 {% endif %}
 
 {% if params['numeric_strat'] in ['quantiles', 'percentiles'] %}
-with open('{{ field }}_scale.json', 'r', encoding='utf8', errors='ignore') as infile:
+with open('{{ field }}_encoder.json', 'r', encoding='utf8', errors='ignore') as infile:
     {{ field }}_bins = json.load(infile)
 encoders['{{ field }}_bins'] = {{ field }}_bins
 encoders['{{ field }}_encoder'] = {{ field }}_encoder

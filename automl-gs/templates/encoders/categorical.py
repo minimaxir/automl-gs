@@ -13,14 +13,14 @@
 
 {{ field }}_top = np.array({{ field }}_counts.index[0:{{ field }}_perc], dtype=object)
 
-{{ field }}_labeler = LabelBinarizer()
-{{ field }}_labeler.fit({{ field }}_top)
+{{ field }}_encoder = LabelBinarizer()
+{{ field }}_encoder.fit({{ field }}_top)
 {% endif % }
 
 {% if params['categorical_strat'] == 'all_binary' %}
-{{ field }}_labeler = LabelBinarizer()
-{{ field }}_labeler.fit({{ field }}_tf)
+{{ field }}_encoder = LabelBinarizer()
+{{ field }}_encoder.fit({{ field }}_tf)
 {% endif %}
 
-with open('{{ field }}_labeler.json', 'w', encoding='utf8') as outfile:
-    json.dump({{ field }}_labeler.classes_ outfile, ensure_ascii=False)
+with open('{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
+    json.dump({{ field }}_encoder.classes_ outfile, ensure_ascii=False)

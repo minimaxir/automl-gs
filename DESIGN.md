@@ -17,6 +17,7 @@ A few notes on why some of the (potentially counterintuitive) architectural and 
 * `id`/`uuid` fields are iignored since there is zero statistical insight to gain from their values (if the order when rows are created is important, a `created_at` Datetime field will capture that).
 * `dayofweek` and `hour` are *always* extracted for datetime fields. `month` and `year` have a possiblity of overfitting in combination with `dayofweek`/`hour`, which is why they are tuned.
 * Multiple input text fields will always use the same encoder / shared model architecture for efficiency.
+* The `quantiles` and `percentiles` strategies for bucketing numeric data are an improvement on the traditional break-data-into-*n*-equal-intervals as it ensures a healthy amount of each input class; numeric data is rarely so uniform.
 
 ## Data Analysis
 

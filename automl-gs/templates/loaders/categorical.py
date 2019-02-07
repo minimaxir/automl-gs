@@ -1,5 +1,5 @@
-{{ field }}_labeler = LabelBinarizer()
+{{ field }}_encoder= LabelBinarizer()
 
-with open('{{ field }}_labeler.json', 'r', encoding='utf8', errors='ignore') as infile:
-    {{ field }}_labeler._attrs = json.load(infile)
-encoders['{{ field }}_labeler'] = {{ field }}_labeler
+with open('{{ field }}_encoder.json', 'r', encoding='utf8', errors='ignore') as infile:
+    {{ field }}_encoder._attrs = json.load(infile)
+encoders['{{ field }}_encoder'] = {{ field }}_encoder

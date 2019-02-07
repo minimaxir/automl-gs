@@ -1,17 +1,17 @@
 {{ field }}_dayofweeks_enc = pd.to_datetime(df['{{ field }}']).dt.dayofweek
-{{ field }}_dayofweeks_enc = encoders['dayofweeks_lb'].transform({{ field }}_dayofweeks_enc)
+{{ field }}_dayofweeks_enc = encoders['dayofweeks_encoder'].transform({{ field }}_dayofweeks_enc)
 
 {{ field }}_hour = pd.to_datetime(df['{{ field }}']).dt.hour
-{{ field }}_hour = encoders['hour_lb'].transform({{ field }}_hour)
+{{ field }}_hour = encoders['hour_encoder'].transform({{ field }}_hour)
 
 {% if params['datetime_month'] %}
 {{ field }}_month_enc = pd.to_datetime(df['{{ field }}']).dt.month - 1
-{{ field }}_month_enc = encoders['month_lb'].transform({{ field }}_month_enc)
+{{ field }}_month_enc = encoders['month_encoder'].transform({{ field }}_month_enc)
 {% endif %}
 
 {% if params['datetime_year'] %}
 {{ field }}_year_enc = pd.to_datetime(df['{{ field }}']).dt.year
-{{ field }}_year = encoders['{{ field }}_year_lb'].fit_transform({{ field }}_year_enc)
+{{ field }}_year = encoders['{{ field }}_year_encoder'].fit_transform({{ field }}_year_enc)
 {% endif % }
 
 {% if params['datetime_holiday'] %}

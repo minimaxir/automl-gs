@@ -1,11 +1,11 @@
 {{ field }}_enc = df['{{ field }}'].values
 
 {% if params['numeric_strat'] == 'minmax' %}
-{{ field }}_scaler = MinMaxScaler()
+{{ field }}_encoder = MinMaxScaler()
 {% endif % }
 
 {% if params['numeric_strat'] == 'standard' %}
-{{ field }}_scaler = StandardScaler()
+{{ field }}_encoder = StandardScaler()
 {% endif %}
 
 {% if params['numeric_strat'] == 'quantiles' %}
@@ -17,10 +17,10 @@
 {% endif %}
 
 {% if params['numeric_strat'] in ['minmax', 'standard'] %}
-{{ field }_scaler.fit(df['{{ field }}'].values)
+{{ field }_encoder.fit(df['{{ field }}'].values)
 
-with open('{{ field }}_scaler.json', 'w', encoding='utf8') as outfile:
-    json.dump({{ field }}_scaler._attrs, outfile, ensure_ascii=False)
+with open('{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
+    json.dump({{ field }}_encoder._attrs, outfile, ensure_ascii=False)
 {% endif %}
 
 {% if params['numeric_strat'] in ['quantiles', 'percentiles'] %}
