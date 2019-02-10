@@ -2,14 +2,13 @@
 # `objective` specifies which direction to go for optimization.
 
 regression:
-  ['mse', 'mae', 'msle',
-  'poisson', 'r_2']
+  ['mse', 'mae', 'msle', 'r_2']
 binary:
   ['binary_crossentropy', 'accuracy', 'precision', 'recall',
   'f1', 'auc']
 categorical:
   ['categorical_crossentropy', 'accuracy', 'precision', 'recall',
-  'f1', 'auc']
+  'f1',]
 
 # Regression Metrics
 

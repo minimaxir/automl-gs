@@ -17,12 +17,14 @@ if __name__ == '__main__':
     parser.add_argument(
     '-e', '--epochs',  help='# of Epochs (if training)',
     default=20)
+    parser.add_argument(
+    '-c', '--context',  help='Context for running script (used during automl-gs training)",
+    default='standalone')
     args = parser.parse_args()
 
     df = pd.read_csv(args.data)
     data_tf = transform_data(df)
 
-    {# TensorFlow builds the model and loads weights. #}
     model = build_model()
 
     if args.mode == 'train':

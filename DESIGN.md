@@ -26,6 +26,7 @@ A few notes on why some of the (potentially counterintuitive) architectural and 
 ## Model Training
 
 * TensorFlow regression problems use a hyperparameter trying to optimize different metrics to see which one works best: `mse` (mean square error; the typical metric for regression problems), `msle` (mean square logarithmic error, for massively-skewed targets), and `poisson` (poisson loss, for fields which can be modeled as a sum of indepenent events). Optimizing for `msle`/`poisson` can have better results for `mse` if it follows into the data distributions above even if not directly optimizing for `mse`. (for example, by incentivising the MLP to engineer the appropriate inverse function)
+* A custom logger is used to ensure all metrics are recorded properly for all frameworks.
 
 ## TensorFlow (tf.keras)
 

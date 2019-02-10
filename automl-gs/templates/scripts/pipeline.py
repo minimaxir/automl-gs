@@ -140,10 +140,5 @@ def model_train(df, model):
 
     meta_callback = meta_callback()
 
-def meta_callback():
-    """Callback used during model training to save current weights and logs after each training epoch.
-
-    """
-
-    # Only run while using automl-gs, which tells it an epoch is finished.
+{% include 'callbacks/' ~ framework ~ '.py' %}
 
