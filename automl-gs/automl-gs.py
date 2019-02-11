@@ -32,6 +32,9 @@ df = pd.read_csv(csv_path)
 problem_type, target_metric, direction = get_problem_config(
     df[target_field], **kwargs)
 hp_grid = build_hp_grid(framework, input_types, num_trials)
+env = Environment(
+    loader=PackageLoader('automl-gs', 'templates')
+)
 
 fields_norm = normalize_col_names(df)
 df.columns = fields_norm
@@ -46,18 +49,20 @@ train_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
 cmd = build_subprocess_cmd(csv_path, train_folder)
 
 
-for hps in pbar:
+for params in pbar:
     # Generate model files according to the given hyperparameters.
-    generate_model(hps, model_name, framework)
-    generate_pipeline(hps, model_name, framework)
+    render_model(params, model_name,
+                 framework, env, problem_type, target_metric, train_folder, input_types)
 
     # Execute model training using the generated files.
     train_generated_model(cmd, num_epochs)
 
     # Load the training results from the generated CSV,
     # and append to the metrics CSV.
-    results = pd.read_csv("{}/results.csv".format(train_folder))
-    trial_id = uuid.uuid4().hex
+    results = pd.read_csv("{}/metadata/results.csv".format(train_folder))
+    results['trial_id'] = uuid.uuid4().hex
+
+    results.to_csv("metrics_csv", mode="a")
 
     # If the target metric improves, save the new hps/files,
     # update the hyperparameters in console,

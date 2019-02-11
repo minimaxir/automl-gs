@@ -4,7 +4,7 @@ class meta_callback(Callback):
     """
 
     def on_train_begin(self, logs={}):
-        self.f = open('output/log.csv', 'w')
+        self.f = open('metadata/results.csv', 'w')
         self.w= csv.writer(self.f)
         self.w.writerow(['epoch'] + {{ metrics_fields }})
 

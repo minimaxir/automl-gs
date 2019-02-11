@@ -51,7 +51,7 @@ tensorflow:
       - 64
       - 128
       - 256
-  text_max_words:   # maximum number of input words to use for text
+  text_max_length:   # maximum number of input words to use for text
     type: text
     hyperparams:
       - 10

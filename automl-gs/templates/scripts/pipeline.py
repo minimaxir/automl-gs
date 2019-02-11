@@ -7,18 +7,18 @@ def build_model():
     # Returns
         model: A compiled model which can be used to train or predict.
     """
-    {% if 'text' in params.values() %}
+    {% if 'text' in input_types.values() %}
     {% include 'models/' ~ framework ~ '/text.py' %}
     {% endif %}
 
-    {% for field, field_type in params %}
+    {% for field, field_type in input_types %}
         {% if field_type != 'text' %}
         {% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
         {% endif %}
     {% endfor %}
 
     concat = concatenate([
-        {% for field, field_type in params %}
+        {% for field, field_type in input_types %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% endfor %}
         ], name='concat')
@@ -50,11 +50,11 @@ def build_encoders(df):
     # Arguments
         df: A pandas DataFrame containing the data.
     """
-    {% if 'text' in params.values() %}
+    {% if 'text' in input_types.values() %}
     {% include 'encoders/' ~ framework ~ '-text.py' %}
     {% endif %}
 
-    {% for field, field_type in params %}
+    {% for field, field_type in input_types %}
         {% if field_type != 'text' %}
         {% include 'encoders/' ~ field_type ~ '.py' %}
         {% endif %}
@@ -68,11 +68,11 @@ def load_encoders():
     """
 
     encoders = {}
-    {% if 'text' in params.values() %}
+    {% if 'text' in input_types.values() %}
     {% include 'loaders/' ~ framework ~ '-text.py' %}
     {% endif %}
 
-    {% for field, field_type in params %}
+    {% for field, field_type in input_types %}
         {% if field_type != 'text' %}
         {% include 'loaders/' ~ field_type ~ '.py' %}
         {% endif %}
@@ -94,17 +94,17 @@ def process_data(df):
         into the model.
     """
 
-    {% if 'text' in params.values() %}
+    {% if 'text' in input_types.values() %}
     {% include 'processors/' ~ framework ~ '-text.py' %}
     {% endif %}
 
-    {% for field, field_type in params %}
+    {% for field, field_type in input_types %}
         {% if field_type != 'text' %}
         {% include 'processors/' ~ field_type ~ '.py' %}
         {% endif %}
     {% endfor %}
 
-    return [{% for field, field_type in params %}
+    return [{% for field, field_type in input_types %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% endfor %}]
 

@@ -151,14 +151,28 @@ def print_progress_tqdm(hps, metrics):
                console_str.count("\n") + '/r' + console_str)
 
 
-def render_model(hps, model_name, framework):
-    """Renders and saves the base model.py script for the given hyperparameters.
-    """
-
-
-def render_model(hps, model_name, framework):
+def render_model(params, model_name, framework, env, problem_type, target_metric):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
+
+    files = ['model.py', 'pipeline.py', 'requirements.txt']
+
+    for file in files:
+        script = env.render('scripts/' + file,
+                    params=params,
+                    model_name=model_name,
+                    framework=framework,
+                    problem_type=problem_type,
+                    target_metric=target_metric,
+                    input_types=input_types)
+
+        script = fix_code(script)
+
+        with open(train_folder + "/" + file, 'w', encoding='utf8') as outfile:
+            outfile.write(script)
+
+
+
 
 
 def get_problem_config(target_data, **kwargs):

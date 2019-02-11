@@ -1,8 +1,8 @@
 # Text
 
-{% for field, field_type in params %}
+{% for field, field_type in input_types %}
     {% if field_type == 'text' %}
-    input_{{ field }} = Input(shape=({{ text_max_words }},), name='input_{{ field }}')
+    input_{{ field }} = Input(shape=({{ text_max_length }},), name='input_{{ field }}')
     {% endif %}
 {% endfor %}
 
@@ -15,10 +15,10 @@ dropout_text = SpatialDropout1D({{ text_dropout }}, name='dropout_text')(embeddi
 if len(K.tensorflow_backend._get_available_gpus()) > 0:
     text_rnn = CuDNN{{ text_rnn_type }}({{ text_rnn_size }}, name='rnn_text')(dropout_text)
 else:
-    text_rnn = {{ text_rnn_type }}({{text_rnn_size}}, name='rnn_text',
+    text_rnn = {{ text_rnn_type }}({{ text_rnn_size }}, name='rnn_text',
                             recurrent_activation='sigmoid')(dropout_text)
 
-{% for field, field_type in params %}
+{% for field, field_type in input_types %}
     {% if field_type == 'text' %}
     embeddings_{{ field }} = embeddings_text(input_{{ field }})
     dropout_{{ field }} = dropout_text(embeddings_{{ field }})

@@ -1,6 +1,8 @@
 # Transform and pad all text fields.
 
-{% for field in fields % }
+{% for field, field_type in input_types %}
+    {% if field_type != 'text' %}
 {{ field }}_enc = encoders['tokenizer'].texts_to_sequences(df['{{ field }}'].values)
 {{ field }}_enc= sequence.pad_sequences({{ field }}_enc, maxlen={{ text_max_length }})
+    {% endif %}
 {% endfor %}
