@@ -22,7 +22,7 @@ Currently automl-gs supports the generation of models for regression and classif
 * XGBoost
 * Catboost
 * scikit-learn:
-  * LinearSVM
+  * LinearRegression
 
 ## How it Works
 

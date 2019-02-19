@@ -35,8 +35,8 @@ def get_input_types(df, col_types):
         num_unique_values = df[field].nunique()
         avg_spaces = df[field].count(' ').mean()[0]
 
-        # Automatically ignore `id` and `uuid` fields
-        if field in ['id', 'uuid']:
+        # Automatically ignore `id`-related fields
+        if field in ['id', 'uuid', 'guid', 'pk']:
             field_types[field] = 'ignore'
 
         # Foreign key fields are always categorical

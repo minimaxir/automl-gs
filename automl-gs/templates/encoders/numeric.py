@@ -9,11 +9,11 @@
 {% endif %}
 
 {% if params['numeric_strat'] == 'quantiles' %}
-{{ field }}_bins = np.percentile({{ field }}_enc, range(25, 75, 25))
+{{ field }}_bins = {{ field }}_enc.quantile(np.linspace(0, 1, 4+1))
 {% endif %}
 
 {% if params['numeric_strat'] == 'percentiles' %}
-{{ field }}_bins = np.percentile({{ field }}_enc, range(10, 90, 10))
+{{ field }}_bins = {{ field }}_enc.quantile(np.linspace(0, 1, 10+1))
 {% endif %}
 
 {% if params['numeric_strat'] in ['minmax', 'standard'] %}
