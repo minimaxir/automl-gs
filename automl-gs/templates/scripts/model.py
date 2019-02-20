@@ -28,9 +28,13 @@ if __name__ == '__main__':
     model = build_model()
 
     if args.mode == 'train':
+        build_encoders(df)
+        encoders = load_encoders()
+        model = build_model(encoders)
         model_train(data_tf, model)
     elif args.mode == 'predict':
-        model.load_weights('model_weights.hdf5')
         encoders = load_encoders()
+        model = build_model(encoders)
+        model.load_weights('model_weights.hdf5')
         predictions = model_predict(data_tf, model, encoders)
         pd.DataFrame(predictions).to_csv('predictions.csv', index=False)

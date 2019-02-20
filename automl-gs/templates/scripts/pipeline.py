@@ -1,8 +1,11 @@
 from tf.contrib.opt import AdamWOptimizer
 from tf.train import cosine_decay
 
-def build_model():
+def build_model(encoders):
     """Builds and compiles the model from scratch.
+
+    # Arguments
+        encoders: dict of encoders (used to set size of text/categorical inputs)
 
     # Returns
         model: A compiled model which can be used to train or predict.
@@ -125,7 +128,7 @@ def model_predict(df, model):
     return model.predict(data_enc)
     {% endif %}
 
-def model_train(df, model):
+def model_train(df, model, encoders):
     """Trains a model, and saves the data locally.
     Also rebuilds the encoders to fit the new data.
 
@@ -133,7 +136,7 @@ def model_train(df, model):
         df: A pandas DataFrame containing the source data.
         model: A compiled model.
     """
-    build_encoders(df)
+    
     data_enc = process_data(df)
 
     target = df['{{ target_metric }}'].values

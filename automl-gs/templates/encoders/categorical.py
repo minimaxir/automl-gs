@@ -23,4 +23,4 @@
 {% endif %}
 
 with open('encoders/{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
-    json.dump({{ field }}_encoder.classes_ outfile, ensure_ascii=False)
+    json.dump({{ field }}_encoder.classes_, outfile, ensure_ascii=False)

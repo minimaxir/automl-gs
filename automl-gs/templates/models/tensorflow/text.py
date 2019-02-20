@@ -9,7 +9,7 @@
 # Base TensorFlow model encoding for text
 # Each text input uses the shared model.
 
-embeddings_text = Embedding({{ text_max_words }} + 1, 50, name='embeddings_text')
+embeddings_text = Embedding(min({{ text_max_words }}, len(encoders['tokenizer'].vocab)) + 1, 50, name='embeddings_text')
 dropout_text = SpatialDropout1D({{ text_dropout }}, name='dropout_text')(embeddings_text)
 
 if len(K.tensorflow_backend._get_available_gpus()) > 0:
