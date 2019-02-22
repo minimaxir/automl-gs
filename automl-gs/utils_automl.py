@@ -2,10 +2,11 @@ import re
 import pandas as pd
 import random
 import yaml
-import digest
+import itertools
 from pkg_resources import resource_filename
 import tqdm
 from subprocess import Popen, PIPE, CalledProcessError
+from autopep8 import fix_code
 
 
 def get_input_types(df, col_types):
@@ -23,7 +24,8 @@ def get_input_types(df, col_types):
     """
 
     fields = df.columns
-    nrows = df.nrows
+    nrows = df.shape[0]
+    avg_spaces = -1
 
     field_types = {}
 
@@ -33,7 +35,8 @@ def get_input_types(df, col_types):
             next
         field_type = df[field].dtype
         num_unique_values = df[field].nunique()
-        avg_spaces = df[field].count(' ').mean()[0]
+        if field_type == 'object':
+            avg_spaces = df[field].str.count(' ').mean()
 
         # Automatically ignore `id`-related fields
         if field in ['id', 'uuid', 'guid', 'pk']:
@@ -44,28 +47,28 @@ def get_input_types(df, col_types):
         #     field_types[field] = 'categorical'
 
         # Datetime is a straightforward data type.
-        else if field_type == 'datetime64[ns]':
+        elif field_type == 'datetime64[ns]':
             field_types[field] = 'datetime'
 
         # Assume a float is always numeric.
-        else if field_type == 'float64':
+        elif field_type == 'float64':
             field_types[field] = 'numeric'
 
         # If it's an object where the contents has
         # many spaces on average, it's text
-        else if field_type == 'object' and avg_spaces >= 3.0:
+        elif field_type == 'object' and avg_spaces >= 2.0:
             field_types[field] = 'text'
 
         # If the field has very few distinct values, it's categorical
-        else if num_unique_values <= 10:
+        elif num_unique_values <= 10:
             field_types[field] = 'categorical'
 
         # If the field has many distinct integers, assume numeric.
-        else if field_type == 'int64':
+        elif field_type == 'int64':
             field_types[field] = 'numeric'
 
         # If the field has many distinct nonintegers, it's not helpful.
-        else if num_unique_values > 0.9 * num-rows:
+        elif num_unique_values > 0.9 * nrows:
             field_types[field] = 'ignore'
 
         # The rest (e.g. bool) is categorical
@@ -74,9 +77,9 @@ def get_input_types(df, col_types):
 
     # Print to console for user-level debugging
     print("Modeling with column specifications:")
-    print("\n".join(["{}: {}".format(k, v) for k, v in field_types]))
+    print("\n".join(["{}: {}".format(k, v) for k, v in field_types.items()]))
 
-    field_types = {k:v if v != 'ignore' for k, v in field_types.items()}
+    field_types = {k:v for k, v in field_types.items() if v != 'ignore'}
 
     return field_types
 
@@ -125,7 +128,7 @@ def build_hp_grid(framework, types, num_trials,
     grid = random.sample(list(itertools.product(*values)), num_trials)
 
     grid_params = [dict(zip(keys, grid_hps)) for grid_hps in grid]
-    return grid-params
+    return grid_params
 
 
 def print_progress_tqdm(hps, metrics):
@@ -151,14 +154,14 @@ def print_progress_tqdm(hps, metrics):
                console_str.count("\n") + '/r' + console_str)
 
 
-def render_model(params, model_name, framework, env, problem_type, target_metric):
+def render_model(params, model_name, framework, env, problem_type, target_metric, train_folder, input_types):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
 
     files = ['model.py', 'pipeline.py', 'requirements.txt']
 
     for file in files:
-        script = env.render('scripts/' + file,
+        script = env.get_template('scripts/' + file).render(
                     params=params,
                     model_name=model_name,
                     framework=framework,
@@ -170,9 +173,6 @@ def render_model(params, model_name, framework, env, problem_type, target_metric
 
         with open(train_folder + "/" + file, 'w', encoding='utf8') as outfile:
             outfile.write(script)
-
-
-
 
 
 def get_problem_config(target_data, **kwargs):
@@ -189,36 +189,36 @@ def get_problem_config(target_data, **kwargs):
         direction: Direction of the metric to optimize (either 'max' or 'min')
     """
 
-    nrows = target_data.nrows
+    nrows = target_data.size
     num_unique_values = target_data.nunique()
     field_type = target_data.dtype
 
     # Problem Type
-    if 'problem_type' in **kwargs:
+    if 'problem_type' in kwargs:
         problem_type = kwargs['problem_type']
-    else if num_unique_values == 2:
+    elif num_unique_values == 2:
         problem_type = 'binary_classification'
-    else if field_type == 'float64':
+    elif field_type == 'float64':
         problem_type = 'regression'
     else:
         problem_type = 'classification'
 
     # Target Metric
-    if 'target_metric' in **kwargs:
+    if 'target_metric' in kwargs:
         target_metric = kwargs['target_metric']
-    else if problem_type == 'regression':
+    elif problem_type == 'regression':
         target_metric = 'mse'
     else:
         target_metric = 'accuracy'
 
     # Direction
-    with open(metrics) as f:
+    with open('metrics.yml') as f:
         metrics = yaml.load(f)
 
     direction = metrics[target_metric]['objective']
 
     # Print variables to console for user-level debugging.
-    print("Solving a {} problem, optimizing {}.".format(problem_type))
+    print("Solving a {} problem, optimizing {}.".format(problem_type, target_metric))
 
     return problem_type, target_metric, direction
 

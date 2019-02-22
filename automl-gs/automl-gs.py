@@ -28,24 +28,24 @@ env = Environment(
 )
 
 df = pd.read_csv(csv_path)
+object_cols = [col for col, col_type in df.dtypes.iteritems() if col_type == 'object']
+df[object_cols] = df[object_cols].apply(pd.to_datetime, errors='ignore')
 
 problem_type, target_metric, direction = get_problem_config(
     df[target_field], **kwargs)
-hp_grid = build_hp_grid(framework, input_types, num_trials)
-env = Environment(
-    loader=PackageLoader('automl-gs', 'templates')
-)
+input_types = get_input_types(df, col_types)
+hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
 
 fields_norm = normalize_col_names(df)
 df.columns = fields_norm
 
-input_types = get_input_types(df, col_types)
-
 pbar = tqdm(hp_grid)
 metrics_csv = open("metrics.csv", 'w')
 best_result = -1
-timeformat_utc = "{:%Y%m%d_%H:%M:%S}".format(datetime.utcnow())
+timeformat_utc = "{:%Y%m%d_%H%M%S}".format(datetime.utcnow())
 train_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
+if not os.path.exists(train_folder):
+    os.mkdir(train_folder)
 cmd = build_subprocess_cmd(csv_path, train_folder)
 
 
