@@ -2,7 +2,7 @@
 
 {% if params['numeric_strat'] == 'minmax' %}
 {{ field }}_encoder = MinMaxScaler()
-{% endif % }
+{% endif %}
 
 {% if params['numeric_strat'] == 'standard' %}
 {{ field }}_encoder = StandardScaler()
@@ -17,7 +17,7 @@
 {% endif %}
 
 {% if params['numeric_strat'] in ['minmax', 'standard'] %}
-{{ field }_encoder.fit(df['{{ field }}'].values)
+{{ field }}_encoder.fit(df['{{ field }}'].values)
 
 with open('encoders/{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
     json.dump({{ field }}_encoder._attrs, outfile, ensure_ascii=False)

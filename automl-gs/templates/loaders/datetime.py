@@ -19,7 +19,7 @@ encoders['month_encoder'] = month_encoder
 {{ field }}_year = pd.to_datetime(df['{{ field }}']).dt.year
 {{ field }}_year_encoder = LabelBinarizer()
 encoders['{{ field }}_year_encoder'] = {{ field }}_year_encoder
-{% endif % }
+{% endif %}
 
 {% if params['datetime_holiday'] %}
 {{ field }}_holiday_encoder = LabelBinarizer()

@@ -12,7 +12,7 @@
 {% if params['datetime_year'] %}
 {{ field }}_year_enc = pd.to_datetime(df['{{ field }}']).dt.year
 {{ field }}_year = encoders['{{ field }}_year_encoder'].fit_transform({{ field }}_year_enc)
-{% endif % }
+{% endif %}
 
 {% if params['datetime_holiday'] %}
 year_range = pd.to_datetime(df['{{ field }}']).dt.year

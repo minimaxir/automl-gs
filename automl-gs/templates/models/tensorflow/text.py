@@ -1,6 +1,6 @@
 # Text
 
-{% for field, field_type in input_types %}
+{% for field, field_type in input_types.items() %}
     {% if field_type == 'text' %}
     input_{{ field }} = Input(shape=({{ text_max_length }},), name='input_{{ field }}')
     {% endif %}
@@ -18,7 +18,7 @@ else:
     text_rnn = {{ text_rnn_type }}({{ text_rnn_size }}, name='rnn_text',
                             recurrent_activation='sigmoid')(dropout_text)
 
-{% for field, field_type in input_types %}
+{% for field, field_type in input_types.items() %}
     {% if field_type == 'text' %}
     embeddings_{{ field }} = embeddings_text(input_{{ field }})
     dropout_{{ field }} = dropout_text(embeddings_{{ field }})

@@ -19,7 +19,7 @@ month_encoder.classes_ = list(range(12))
 {{ field }}_year = pd.to_datetime(df['{{ field }}']).dt.year
 {{ field }}_year_encoder = LabelBinarizer()
 {{ field }}_year = {{ field }}_year_encoder.fit_transform({{ field }}_year)
-{% endif % }
+{% endif %}
 
 {% if params['datetime_holiday'] %}
 year_range = pd.to_datetime(df['{{ field }}']).dt.year

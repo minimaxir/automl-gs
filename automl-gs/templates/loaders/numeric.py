@@ -1,6 +1,6 @@
 {% if params['numeric_strat'] == 'minmax' %}
 {{ field }}_encoder = MinMaxScaler()
-{% endif % }
+{% endif %}
 
 {% if params['numeric_strat'] == 'standard' %}
 {{ field }}_encoder = StandardScaler()
