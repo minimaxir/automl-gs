@@ -2,20 +2,20 @@
 
 {% for field, field_type in input_types.items() %}
     {% if field_type == 'text' %}
-    input_{{ field }} = Input(shape=({{ text_max_length }},), name='input_{{ field }}')
+    input_{{ field }} = Input(shape=({{ params['text_max_length'] }},), name='input_{{ field }}')
     {% endif %}
 {% endfor %}
 
 # Base TensorFlow model encoding for text
 # Each text input uses the shared model.
 
-embeddings_text = Embedding(min({{ text_max_words }}, len(encoders['tokenizer'].vocab)) + 1, 50, name='embeddings_text')
-dropout_text = SpatialDropout1D({{ text_dropout }}, name='dropout_text')(embeddings_text)
+embeddings_text = Embedding(min(10000, len(encoders['tokenizer'].vocab)) + 1, 50, name='embeddings_text')
+dropout_text = SpatialDropout1D({{ params['text_dropout'] }}, name='dropout_text')(embeddings_text)
 
 if len(K.tensorflow_backend._get_available_gpus()) > 0:
-    text_rnn = CuDNN{{ text_rnn_type }}({{ text_rnn_size }}, name='rnn_text')(dropout_text)
+    text_rnn = CuDNN{{ params['text_rnn_type'] }}({{ params[['text_rnn_size'] }}, name='rnn_text')(dropout_text)
 else:
-    text_rnn = {{ text_rnn_type }}({{ text_rnn_size }}, name='rnn_text',
+    text_rnn = {{ params['text_rnn_type'] }}({{ params['text_rnn_size'] }}, name='rnn_text',
                             recurrent_activation='sigmoid')(dropout_text)
 
 {% for field, field_type in input_types.items() %}

@@ -156,7 +156,7 @@ def print_progress_tqdm(hps, metrics):
                console_str.count("\n") + '/r' + console_str)
 
 
-def render_model(params, model_name, framework, env, problem_type, target_metric, train_folder, input_types):
+def render_model(params, model_name, framework, env, problem_type, target_metric, target_field, train_folder, input_types):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
 
@@ -169,6 +169,7 @@ def render_model(params, model_name, framework, env, problem_type, target_metric
                     framework=framework,
                     problem_type=problem_type,
                     target_metric=target_metric,
+                    target_field=target_field,
                     input_types=input_types)
 
         script = fix_code(script)

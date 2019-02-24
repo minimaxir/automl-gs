@@ -29,14 +29,15 @@ def build_model(encoders):
     {% include 'models/' ~ framework ~ '/mlp.py' %}
 
     model = Model(inputs=[
-        {% for field, field_type in params.items() %}
-        input{{ field }}{{ ", " if not loop.last }}
+        {% for field, field_type in input_types.items() %}
+        input_{{ field }}{{ ", " if not loop.last }}
         {% endfor %}
                 ],
                       outputs=[output])
 
     global_step = tf.Variable(0, trainable=False)
-    lr_decayed = cosine_decay({{ learning_rate }}, global_step, 1000)
+    lr_decayed = cosine_decay({{ params[
+        'base_lr'] }}, global_step, 1000)
     model.compile(loss=hybrid_loss,
               optimizer=AdamWOptimizer(learning_rate = lr_decayed,
                                         weight_decay = {{ weight_decay }})
@@ -139,7 +140,7 @@ def model_train(df, model, encoders):
     
     data_enc = process_data(df)
 
-    target = df['{{ target_metric }}'].values
+    target = df['{{ target_field }}'].values
 
     meta_callback = meta_callback()
 

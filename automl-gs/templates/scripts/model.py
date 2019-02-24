@@ -6,7 +6,7 @@ from pipeline import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description='A script which utilizes a model trained to predict {{ target_metric }}.'
+        description='A script which utilizes a model trained to predict {{ target_field }}.'
                     'Script created using automl-gs.')
     parser.add_argument('-d', '--data',  help='Input dataset (must be a .csv)')
     parser.add_argument(

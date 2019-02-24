@@ -52,7 +52,7 @@ cmd = build_subprocess_cmd(csv_path, train_folder)
 for params in pbar:
     # Generate model files according to the given hyperparameters.
     render_model(params, model_name,
-                 framework, env, problem_type, target_metric, train_folder, input_types)
+                 framework, env, problem_type, target_metric, target_field, train_folder, input_types)
 
     # Execute model training using the generated files.
     train_generated_model(cmd, num_epochs)
