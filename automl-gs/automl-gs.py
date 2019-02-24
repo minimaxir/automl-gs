@@ -24,7 +24,9 @@ def automl_grid_search(csv_path, target_field,
 
 
 env = Environment(
-    loader=PackageLoader('automl-gs', 'templates')
+    loader=PackageLoader('automl-gs', 'templates'),
+    trim_blocks=True,
+    lstrip_blocks=True
 )
 
 df = pd.read_csv(csv_path)

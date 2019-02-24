@@ -10,15 +10,16 @@ def build_model(encoders):
     # Returns
         model: A compiled model which can be used to train or predict.
     """
-    {% if 'text' in input_types.values() %}
-    {% include 'models/' ~ framework ~ '/text.py' %}
-    {% endif %}
+{% if 'text' in input_types.values() %}
+{% include 'models/' ~ framework ~ '/text.py' %}
+{% endif %}
 
-    {% for field, field_type in input_types.items() %}
-        {% if field_type != 'text' %}
-        {% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
-        {% endif %}
-    {% endfor %}
+{% for field, field_type in input_types.items() %}
+{% if field_type != 'text' %}
+{% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
+
+{% endif %}
+{% endfor %}
 
     concat = concatenate([
         {% for field, field_type in input_types.items() %}
@@ -26,7 +27,7 @@ def build_model(encoders):
         {% endfor %}
         ], name='concat')
 
-    {% include 'models/' ~ framework ~ '/mlp.py' %}
+{% include 'models/' ~ framework ~ '/mlp.py' %}
 
     model = Model(inputs=[
         {% for field, field_type in input_types.items() %}
@@ -40,7 +41,7 @@ def build_model(encoders):
         'base_lr'] }}, global_step, 1000)
     model.compile(loss=hybrid_loss,
               optimizer=AdamWOptimizer(learning_rate = lr_decayed,
-                                        weight_decay = {{ weight_decay }})
+                                        weight_decay = {{ params['weight_decay'] }}))
 
     return model
 
@@ -54,15 +55,16 @@ def build_encoders(df):
     # Arguments
         df: A pandas DataFrame containing the data.
     """
-    {% if 'text' in input_types.values() %}
-    {% include 'encoders/' ~ framework ~ '-text.py' %}
-    {% endif %}
+{% if 'text' in input_types.values() %}
+{% include 'encoders/' ~ framework ~ '-text.py' %}
+{% endif %}
 
-    {% for field, field_type in input_types.items() %}
-        {% if field_type != 'text' %}
-        {% include 'encoders/' ~ field_type ~ '.py' %}
-        {% endif %}
-    {% endfor %}
+{% for field, field_type in input_types.items() %}
+{% if field_type != 'text' %}
+{% include 'encoders/' ~ field_type ~ '.py' %}
+{% endif %}
+
+{% endfor %}
 
 def load_encoders():
     """Loads the encoders built during `build_encoders`.
@@ -72,15 +74,16 @@ def load_encoders():
     """
 
     encoders = {}
-    {% if 'text' in input_types.values() %}
-    {% include 'loaders/' ~ framework ~ '-text.py' %}
-    {% endif %}
+{% if 'text' in input_types.values() %}
+{% include 'loaders/' ~ framework ~ '-text.py' %}
+{% endif %}
 
-    {% for field, field_type in input_types.items() %}
-        {% if field_type != 'text' %}
-        {% include 'loaders/' ~ field_type ~ '.py' %}
-        {% endif %}
-    {% endfor %}
+{% for field, field_type in input_types.items() %}
+{% if field_type != 'text' %}
+{% include 'loaders/' ~ field_type ~ '.py' %}
+{% endif %}
+
+{% endfor %}
     return encoders
 
 def process_data(df):
@@ -98,19 +101,21 @@ def process_data(df):
         into the model.
     """
 
-    {% if 'text' in input_types.values() %}
-    {% include 'processors/' ~ framework ~ '-text.py' %}
-    {% endif %}
+{% if 'text' in input_types.values() %}
+{% include 'processors/' ~ framework ~ '-text.py' %}
+{% endif %}
 
-    {% for field, field_type in input_types.items() %}
-        {% if field_type != 'text' %}
-        {% include 'processors/' ~ field_type ~ '.py' %}
-        {% endif %}
-    {% endfor %}
+{% for field, field_type in input_types.items() %}
+{% if field_type != 'text' %}
+{% include 'processors/' ~ field_type ~ '.py' %}
+{% endif %}
+
+{% endfor %}
 
     return [{% for field, field_type in input_types.items() %}
         {{ field }}_enc{{ ", " if not loop.last }}
-        {% endfor %}]
+        {% endfor %}
+        ]
 
 
 def model_predict(df, model):
