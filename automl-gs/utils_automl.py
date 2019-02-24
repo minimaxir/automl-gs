@@ -2,7 +2,6 @@ import re
 import pandas as pd
 import random
 import yaml
-import itertools
 from pkg_resources import resource_filename
 import tqdm
 from subprocess import Popen, PIPE, CalledProcessError
@@ -122,10 +121,13 @@ def build_hp_grid(framework, types, num_trials,
     # Refine hyperparameters by only using ones relevant to
     # the data and framework of choice
     hps = dict(hps['base'], **hps[framework])
-    keys = [key for key in hps.keys() if hps[key]['type'] in types]
+    keys = [key for key in hps.keys() if (hps[key]['type'] in types
+            or hps[key]['type'] == 'base')]
     values = [hps[key]['hyperparams'] for key in keys]
 
-    grid = random.sample(list(itertools.product(*values)), num_trials)
+    grid = set()
+    while len(grid) < num_trials:
+        grid.add(tuple([random.choice(x) for x in values]))
 
     grid_params = [dict(zip(keys, grid_hps)) for grid_hps in grid]
     return grid_params
