@@ -1,5 +1,3 @@
-    mlp_blocks = {{ params['mlp_blocks'] }}
-
 {% include 'models/tensorflow/mlp-' ~ params['mlp_activation'] ~ '.py' %}
         
     {% if problem_type == 'regression' %}

@@ -15,6 +15,8 @@ def automl_grid_search(csv_path, target_field,
                        framework='tensorflow',
                        context='standalone',
                        num_trials=1000,
+                       split=0.7,
+                       num_epochs=20,
                        col_types={},
                        **kwargs):
     """Parent function which performs the hyperparameter search.
@@ -38,8 +40,8 @@ problem_type, target_metric, direction = get_problem_config(
 input_types = get_input_types(df, col_types)
 hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
 
-fields_norm = normalize_col_names(df)
-df.columns = fields_norm
+fields_unnorm = input_types
+fields_norm = normalize_col_names(input_types)
 
 pbar = tqdm(hp_grid)
 metrics_csv = open("metrics.csv", 'w')
@@ -54,7 +56,9 @@ cmd = build_subprocess_cmd(csv_path, train_folder)
 for params in pbar:
     # Generate model files according to the given hyperparameters.
     render_model(params, model_name,
-                 framework, env, problem_type, target_metric, target_field, train_folder, input_types)
+                 framework, env, problem_type,
+                 target_metric, target_field,
+                 train_folder, fields_norm, fields_unnorm, split, num_epochs)
 
     # Execute model training using the generated files.
     train_generated_model(cmd, num_epochs)

@@ -1,6 +1,4 @@
-import argparse
-import pandas as pd
-from pipeline import *
+{% include 'imports/model.py' %}
 
 # Main script which calls other model functions.
 
@@ -13,16 +11,23 @@ if __name__ == '__main__':
         '-m', '--mode',  help='Mode (either "train" or "predict")')
     parser.add_argument(
     '-s', '--split',  help='Train/Test Split (if training)',
-    default=0.7)
+    default={{ split }})
     parser.add_argument(
     '-e', '--epochs',  help='# of Epochs (if training)',
-    default=20)
+    default={{ num_epochs }})
     parser.add_argument(
     '-c', '--context',  help='Context for running script (used during automl-gs training)",
     default='standalone')
     args = parser.parse_args()
 
-    df = pd.read_csv(args.data)
+    cols = [{% for key in fields_unnorm.keys() %}
+            "{{ key }}"{{ ", " if not loop.last }}
+            {% endfor %}]
+    dtypes = {{ fields_unnorm }}
+
+    df = pd.read_csv(args.data, parse_dates=True,
+                     usecols=cols,
+                     dtype=dtypes)
     data_tf = transform_data(df)
 
     model = build_model()

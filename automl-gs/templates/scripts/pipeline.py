@@ -1,5 +1,4 @@
-from tf.contrib.opt import AdamWOptimizer
-from tf.train import cosine_decay
+{% include 'imports/pipeline.py' %}
 
 def build_model(encoders):
     """Builds and compiles the model from scratch.

@@ -6,6 +6,7 @@ Nowadays, the cost of computing many different models and hyperparameters is muc
 
 * Generates native Python code; no platform lock-in, and no need to use automl-gs after the model script is created.
 * Train model configurations super-fast *for free* using a **TPU** in Google Colaboratory.
+* Handles messy datasets that normally require manual intervention, such as datetime/categorical encoding and spaced/parathesized field names.
 * Each part of the generated model pipeline is its own  function w/ docstrings, making it much easier to integrate into production workflows.
 * Extremely detailed metrics reporting for every trial stored in a CSV, allowing you to identify and visualize model strengths and weaknesses.
 * Correct serialization of data pipeline encoders on disk (i.e. no pickled Python objects!)

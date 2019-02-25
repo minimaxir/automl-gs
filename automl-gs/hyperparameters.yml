@@ -24,11 +24,11 @@ base:
     hyperparams:
       - True
       - False
-  datetime_holiday:   # include categorical holiday when encoding datetimes
-    type: datetime
-    hyperparams:
-      - True
-      - False
+  # datetime_holiday:   # include categorical holiday when encoding datetimes
+  #   type: datetime
+  #   hyperparams:
+  #     - True
+  #     - False
   categorical_strat:   # strategy for handling categorical inputs
     type: categorical
     hyperparams:

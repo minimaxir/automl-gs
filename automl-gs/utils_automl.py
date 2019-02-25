@@ -78,25 +78,33 @@ def get_input_types(df, col_types):
     print("Modeling with column specifications:")
     print("\n".join(["{}: {}".format(k, v) for k, v in field_types.items()]))
 
-    field_types = {k:v for k, v in field_types.items() if v != 'ignore'}
+    field_types = {k: v for k, v in field_types.items() if v != 'ignore'}
 
     return field_types
 
 
-def normalize_col_names(df):
+def normalize_col_names(input_types):
     """Fixes unusual column names (e.g. Caps, Spaces)
     to make them suitable printing into code templates.
 
     # Arguments:
-        df: A pandas DataFrame.
+        input_types: dict of col names: input types
 
     # Returns:
-        A pandas DataFrame with normalized column names.
+        A dict of col names: input types with normalized keys
     """
 
+    # type_map = {
+    #     'numeric': 'float64',
+    #     'categorical': 'str',
+    #     'datetime': 'str',
+    #     'text': 'str'
+    # }
+
     pattern = re.compile('\W+')
-    fields = df.columns
-    fields_norm = [re.sub(pattern, '_', field.lower()) for field in fields]
+    fields = input_types.keys()
+    fields_norm = {re.sub(pattern, '_', field.lower()): field_type
+                   for field, field_type in input_types.items()}
 
     return fields_norm
 
@@ -122,7 +130,7 @@ def build_hp_grid(framework, types, num_trials,
     # the data and framework of choice
     hps = dict(hps['base'], **hps[framework])
     keys = [key for key in hps.keys() if (hps[key]['type'] in types
-            or hps[key]['type'] == 'base')]
+                                          or hps[key]['type'] == 'base')]
     values = [hps[key]['hyperparams'] for key in keys]
 
     grid = set()
@@ -156,7 +164,9 @@ def print_progress_tqdm(hps, metrics):
                console_str.count("\n") + '/r' + console_str)
 
 
-def render_model(params, model_name, framework, env, problem_type, target_metric, target_field, train_folder, input_types):
+def render_model(params, model_name, framework, env, problem_type, 
+                 target_metric, target_field, train_folder, fields_norm, 
+                 fields_unnorm, split, num_epochs):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
 
@@ -164,13 +174,16 @@ def render_model(params, model_name, framework, env, problem_type, target_metric
 
     for file in files:
         script = env.get_template('scripts/' + file).render(
-                    params=params,
-                    model_name=model_name,
-                    framework=framework,
-                    problem_type=problem_type,
-                    target_metric=target_metric,
-                    target_field=target_field,
-                    input_types=input_types)
+            params=params,
+            model_name=model_name,
+            framework=framework,
+            problem_type=problem_type,
+            target_metric=target_metric,
+            target_field=target_field,
+            input_types=fields_norm,
+            fields_unnorm=fields_unnorm,
+            split=split,
+            num_epochs=num_epochs)
 
         script = fix_code(script)
 
@@ -221,9 +234,11 @@ def get_problem_config(target_data, **kwargs):
     direction = metrics[target_metric]['objective']
 
     # Print variables to console for user-level debugging.
-    print("Solving a {} problem, optimizing {}.".format(problem_type, target_metric))
+    print("Solving a {} problem, optimizing {}.".format(
+        problem_type, target_metric))
 
     return problem_type, target_metric, direction
+
 
 def build_subprocess_cmd(csv_path, train_folder):
     """Builds the command used to call a subprocess for model training.
