@@ -22,7 +22,11 @@ def build_model(encoders):
 
     concat = concatenate([
         {% for field, field_type in input_types.items() %}
+        {% if field_type == 'text' %}
         {{ field }}_enc{{ ", " if not loop.last }}
+        {% else %}
+        input_{{ field }}{{ ", " if not loop.last }}
+        {% endif %}
         {% endfor %}
         ], name='concat')
 
