@@ -13,7 +13,7 @@ def build_model(encoders):
 {% include 'models/' ~ framework ~ '/text.py' %}
 {% endif %}
 
-{% for field, field_type in input_types.items() %}
+{% for field, field_type in nontarget_fields.items() %}
 {% if field_type != 'text' %}
 {% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
 
@@ -21,7 +21,7 @@ def build_model(encoders):
 {% endfor %}
 
     concat = concatenate([
-        {% for field, field_type in input_types.items() %}
+        {% for field, field_type in nontarget_fields.items() %}
         {% if field_type == 'text' %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% else %}
@@ -33,8 +33,10 @@ def build_model(encoders):
 {% include 'models/' ~ framework ~ '/mlp.py' %}
 
     model = Model(inputs=[
-        {% for field, field_type in input_types.items() %}
+        {% for field, field_type in nontarget_fields.items() %}
+        {% if field != target_field %}
         input_{{ field }}{{ ", " if not loop.last }}
+        {% endif %}
         {% endfor %}
                 ],
                       outputs=[output])
@@ -62,12 +64,13 @@ def build_encoders(df):
 {% include 'encoders/' ~ framework ~ '-text.py' %}
 {% endif %}
 
-{% for field, field_type in input_types.items() %}
+{% for field, field_type in nontarget_fields.items() %}
 {% if field_type != 'text' %}
 {% include 'encoders/' ~ field_type ~ '.py' %}
 {% endif %}
 
 {% endfor %}
+{% include 'encoders/target.py' %}
 
 def load_encoders():
     """Loads the encoders built during `build_encoders`.
@@ -81,12 +84,13 @@ def load_encoders():
 {% include 'loaders/' ~ framework ~ '-text.py' %}
 {% endif %}
 
-{% for field, field_type in input_types.items() %}
+{% for field, field_type in nontarget_fields.items() %}
 {% if field_type != 'text' %}
 {% include 'loaders/' ~ field_type ~ '.py' %}
 {% endif %}
 
 {% endfor %}
+{% include 'loaders/target.py' %}
     return encoders
 
 def process_data(df):
@@ -108,14 +112,14 @@ def process_data(df):
 {% include 'processors/' ~ framework ~ '-text.py' %}
 {% endif %}
 
-{% for field, field_type in input_types.items() %}
+{% for field, field_type in nontarget_fields.items() %}
 {% if field_type != 'text' %}
 {% include 'processors/' ~ field_type ~ '.py' %}
 {% endif %}
 
 {% endfor %}
-
-    return [{% for field, field_type in input_types.items() %}
+{% include 'processors/target.py' %}
+    return [{% for field, field_type in nontarget_fields.items() %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% endfor %}
         ]

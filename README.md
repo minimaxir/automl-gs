@@ -35,7 +35,7 @@ The best model Python script is kept after each trial, which can then easily be 
 
 ## Helpful Notes
 
-* *It is the user's responsibility to ensure the input dataset is high-quality.* No model hyperparameter search will provide good research on flawed/unbalanced datasets.
+* *It is the user's responsibility to ensure the input dataset is high-quality.* No model hyperparameter search will provide good research on flawed/unbalanced datasets. Relatedly, hyperparameter optimization may provide optimistic predictions on the validation set, which may not necessairly match the model performance in the real world.
 
 ## Future Work
 
@@ -58,6 +58,7 @@ The best model Python script is kept after each trial, which can then easily be 
 * TensorBoard support?
 * Tool for generating a Flask/Starlette REST API from a trained model script
 * Secondary progress bars for epoch progress in each trial.
+* Allow passing an explicit, pre-defined test set CSV.
 
 ## Maintainer/Creator
 

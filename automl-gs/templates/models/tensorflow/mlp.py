@@ -9,5 +9,5 @@
     {% endif %}
 
     {% if problem_type == 'classification' %}
-    output = Dense(num_classes, activation='softmax', name='output', kernel_regularizer={{ params['output_regularizer'] }})(hidden)
+    output = Dense(encoders['{{ target_field }}_encoder'].classes_.shape[0], activation='softmax', name='output', kernel_regularizer={{ params['output_regularizer'] }})(hidden)
     {% endif %}

@@ -10,7 +10,7 @@ if __name__ == '__main__':
     parser.add_argument(
         '-m', '--mode',  help='Mode (either "train" or "predict")')
     parser.add_argument(
-    '-s', '--split',  help='Train/Test Split (if training)',
+    '-s', '--split',  help='Train/Validation Split (if training)',
     default={{ split }})
     parser.add_argument(
     '-e', '--epochs',  help='# of Epochs (if training)',

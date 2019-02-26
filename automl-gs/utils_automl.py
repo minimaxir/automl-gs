@@ -173,6 +173,7 @@ def render_model(params, model_name, framework, env, problem_type,
     files = ['model.py', 'pipeline.py', 'requirements.txt']
 
     text_fields = {k: v for k, v in fields_unnorm.items() if v == 'text'}
+    nontarget_fields = {k: v for k, v in fields_norm.items() if k != target_field}
 
     for file in files:
         script = env.get_template('scripts/' + file).render(
@@ -186,7 +187,8 @@ def render_model(params, model_name, framework, env, problem_type,
             fields_unnorm=fields_unnorm,
             split=split,
             num_epochs=num_epochs,
-            text_fields=text_fields)
+            text_fields=text_fields,
+            nontarget_fields=nontarget_fields)
 
         script = fix_code(script)
 
