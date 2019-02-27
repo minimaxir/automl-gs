@@ -40,8 +40,7 @@ problem_type, target_metric, direction = get_problem_config(
 input_types = get_input_types(df, col_types)
 hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
 
-fields_unnorm = input_types
-fields_norm = normalize_col_names(input_types)
+fields = normalize_col_names(input_types)
 
 pbar = tqdm(hp_grid)
 metrics_csv = open("metrics.csv", 'w')
@@ -58,7 +57,7 @@ for params in pbar:
     render_model(params, model_name,
                  framework, env, problem_type,
                  target_metric, target_field,
-                 train_folder, fields_norm, fields_unnorm, split, num_epochs)
+                 train_folder, fields, split, num_epochs)
 
     # Execute model training using the generated files.
     train_generated_model(cmd, num_epochs)

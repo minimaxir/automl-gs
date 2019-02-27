@@ -9,11 +9,11 @@ def build_model(encoders):
     # Returns
         model: A compiled model which can be used to train or predict.
     """
-{% if 'text' in input_types.values() %}
+{% if has_text_input %}
 {% include 'models/' ~ framework ~ '/text.py' %}
 {% endif %}
 
-{% for field, field_type in nontarget_fields.items() %}
+{% for field, _, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
 
@@ -21,7 +21,7 @@ def build_model(encoders):
 {% endfor %}
 
     concat = concatenate([
-        {% for field, field_type in nontarget_fields.items() %}
+        {% for field, _, field_type in fields %}
         {% if field_type == 'text' %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% else %}
@@ -33,7 +33,7 @@ def build_model(encoders):
 {% include 'models/' ~ framework ~ '/mlp.py' %}
 
     model = Model(inputs=[
-        {% for field, field_type in nontarget_fields.items() %}
+        {% for field, _, field_type in nontarget_fields %}
         {% if field != target_field %}
         input_{{ field }}{{ ", " if not loop.last }}
         {% endif %}
@@ -60,11 +60,11 @@ def build_encoders(df):
     # Arguments
         df: A pandas DataFrame containing the data.
     """
-{% if 'text' in input_types.values() %}
+{% if has_text_input %}
 {% include 'encoders/' ~ framework ~ '-text.py' %}
 {% endif %}
 
-{% for field, field_type in nontarget_fields.items() %}
+{% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'encoders/' ~ field_type ~ '.py' %}
 {% endif %}
@@ -80,11 +80,11 @@ def load_encoders():
     """
 
     encoders = {}
-{% if 'text' in input_types.values() %}
+{% if has_text_input %}
 {% include 'loaders/' ~ framework ~ '-text.py' %}
 {% endif %}
 
-{% for field, field_type in nontarget_fields.items() %}
+{% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'loaders/' ~ field_type ~ '.py' %}
 {% endif %}
@@ -108,18 +108,18 @@ def process_data(df):
         into the model.
     """
 
-{% if 'text' in input_types.values() %}
+{% if has_text_input %}
 {% include 'processors/' ~ framework ~ '-text.py' %}
 {% endif %}
 
-{% for field, field_type in nontarget_fields.items() %}
+{% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'processors/' ~ field_type ~ '.py' %}
 {% endif %}
 
 {% endfor %}
 {% include 'processors/target.py' %}
-    return [{% for field, field_type in nontarget_fields.items() %}
+    return [{% for field, _, field_type in nontarget_fields %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% endfor %}
         ]

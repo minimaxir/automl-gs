@@ -1,9 +1,7 @@
     # Text
 
-    {% for field, field_type in input_types.items() %}
-    {% if field_type == 'text' %}
+    {% for field, _, field_type in text_inputs %}
     input_{{ field }} = Input(shape=({{ params['text_max_length'] }},), name='input_{{ field }}')
-    {% endif %}
     {% endfor %}
 
     # Base TensorFlow model encoding for text
@@ -18,10 +16,8 @@
         text_rnn = {{ params['text_rnn_type'] }}({{ params['text_rnn_size'] }}, name='rnn_text',
                                 recurrent_activation='sigmoid')(dropout_text)
 
-    {% for field, field_type in input_types.items() %}
-    {% if field_type == 'text' %}
+    {% for field, _, field_type in text_inputs %}
     embeddings_{{ field }} = embeddings_text(input_{{ field }})
     dropout_{{ field }} = dropout_text(embeddings_{{ field }})
     {{ field }}_enc = text_rnn(dropout_{{ field }})
-    {% endif %}
     {% endfor %}

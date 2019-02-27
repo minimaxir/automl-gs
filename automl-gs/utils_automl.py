@@ -102,11 +102,10 @@ def normalize_col_names(input_types):
     # }
 
     pattern = re.compile('\W+')
-    fields = input_types.keys()
-    fields_norm = {re.sub(pattern, '_', field.lower()): field_type
+    fields = {(re.sub(pattern, '_', field.lower()), field, field_type)
                    for field, field_type in input_types.items()}
 
-    return fields_norm
+    return fields
 
 
 def build_hp_grid(framework, types, num_trials,
@@ -165,15 +164,15 @@ def print_progress_tqdm(hps, metrics):
 
 
 def render_model(params, model_name, framework, env, problem_type, 
-                 target_metric, target_field, train_folder, fields_norm, 
-                 fields_unnorm, split, num_epochs):
+                 target_metric, target_field, train_folder, fields, split, num_epochs):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
 
     files = ['model.py', 'pipeline.py', 'requirements.txt']
 
-    text_fields = {k: v for k, v in fields_unnorm.items() if v == 'text'}
-    nontarget_fields = {k: v for k, v in fields_norm.items() if k != target_field}
+    text_fields = [field for field in fields if field[2] == 'text']
+    nontarget_fields = [field for field in fields if field[0] != target_field]
+    has_text_input = 'text' in [field[2] for field in fields]
 
     for file in files:
         script = env.get_template('scripts/' + file).render(
@@ -183,12 +182,12 @@ def render_model(params, model_name, framework, env, problem_type,
             problem_type=problem_type,
             target_metric=target_metric,
             target_field=target_field,
-            input_types=fields_norm,
-            fields_unnorm=fields_unnorm,
+            fields=fields,
             split=split,
             num_epochs=num_epochs,
             text_fields=text_fields,
-            nontarget_fields=nontarget_fields)
+            nontarget_fields=nontarget_fields,
+            has_text_input=has_text_input)
 
         script = fix_code(script)
 

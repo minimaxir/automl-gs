@@ -1,4 +1,4 @@
-    {{ field }}_enc = df['{{ field }}'].values
+    {{ field }}_enc = df['{{ field_raw }}'].values
 
     {% if params['numeric_strat'] == 'minmax' %}
     {{ field }}_encoder = MinMaxScaler()

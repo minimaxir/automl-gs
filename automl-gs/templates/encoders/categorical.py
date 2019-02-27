@@ -1,7 +1,7 @@
-    {{ field }}_tf = df['{{ field }}'].values
+    {{ field }}_tf = df['{{ field_raw }}'].values
 
     {% if params['categorical_strat'] != 'all_binary' %}
-    {{ field }}_counts = df['{{ field }}'].value_counts()
+    {{ field }}_counts = df['{{ field_raw }}'].value_counts()
 
     {% if params['categorical_strat'] != 'top10_perc' %}
     {{ field }}_perc = floor(0.1 * {{ field }}_counts.size)

@@ -20,10 +20,10 @@ if __name__ == '__main__':
     default='standalone')
     args = parser.parse_args()
 
-    cols = [{% for key in fields_unnorm.keys() %}
-            "{{ key }}"{{ ", " if not loop.last }}
+    cols = [{% for field, _, _  in fields %}
+            "{{ field }}"{{ ", " if not loop.last }}
             {% endfor %}]
-    dtypes = {{ fields_unnorm }}
+    dtypes = {{ fields }}
 
     df = pd.read_csv(args.data, parse_dates=True,
                      usecols=cols,
