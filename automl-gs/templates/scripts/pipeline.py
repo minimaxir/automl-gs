@@ -9,11 +9,12 @@ def build_model(encoders):
     # Returns
         model: A compiled model which can be used to train or predict.
     """
+    
 {% if has_text_input %}
 {% include 'models/' ~ framework ~ '/text.py' %}
 {% endif %}
 
-{% for field, _, field_type in nontarget_fields %}
+{% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
 
@@ -60,6 +61,7 @@ def build_encoders(df):
     # Arguments
         df: A pandas DataFrame containing the data.
     """
+
 {% if has_text_input %}
 {% include 'encoders/' ~ framework ~ '-text.py' %}
 {% endif %}
@@ -80,6 +82,7 @@ def load_encoders():
     """
 
     encoders = {}
+
 {% if has_text_input %}
 {% include 'loaders/' ~ framework ~ '-text.py' %}
 {% endif %}
@@ -91,6 +94,7 @@ def load_encoders():
 
 {% endfor %}
 {% include 'loaders/target.py' %}
+
     return encoders
 
 def process_data(df):

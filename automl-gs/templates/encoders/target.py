@@ -1,3 +1,4 @@
+    # Target Metric {{ field }}
     {% if problem_type != 'regression' %}
     {% if problem_type == 'classification' %}
     {{ target_field }}_encoder = LabelBinarizer()
