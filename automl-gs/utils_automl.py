@@ -8,7 +8,7 @@ from subprocess import Popen, PIPE, CalledProcessError
 from autopep8 import fix_code
 
 
-def get_input_types(df, col_types):
+def get_input_types(df, col_types, target_field):
     """Get the input types for each field in the DataFrame that corresponds
     to an input type to be fed into the model.
 
@@ -75,8 +75,8 @@ def get_input_types(df, col_types):
             field_types[field] = 'categorical'
 
     # Print to console for user-level debugging
-    print("Modeling with column specifications:")
-    print("\n".join(["{}: {}".format(k, v) for k, v in field_types.items()]))
+    print("Modeling with field specifications:")
+    print("\n".join(["{}: {}".format(k, v) for k, v in field_types.items() if k != target_field]))
 
     field_types = {k: v for k, v in field_types.items() if v != 'ignore'}
 
