@@ -94,13 +94,6 @@ def normalize_col_names(input_types):
         A dict of col names: input types with normalized keys
     """
 
-    # type_map = {
-    #     'numeric': 'float64',
-    #     'categorical': 'str',
-    #     'datetime': 'str',
-    #     'text': 'str'
-    # }
-
     pattern = re.compile('\W+')
     fields = {(re.sub(pattern, '_', field.lower()), field, field_type)
                    for field, field_type in input_types.items()}
@@ -170,6 +163,14 @@ def render_model(params, model_name, framework, env, problem_type,
 
     files = ['model.py', 'pipeline.py', 'requirements.txt']
 
+    type_map = {
+    'numeric': 'float64',
+    'categorical': 'str',
+    'datetime': 'str',
+    'text': 'str'
+    }
+
+    load_fields = {field[1]: type_map[field[2]] for field in fields}
     text_fields = [field for field in fields if field[2] == 'text']
     nontarget_fields = [field for field in fields if field[0] != target_field]
     has_text_input = 'text' in [field[2] for field in fields]
@@ -185,6 +186,7 @@ def render_model(params, model_name, framework, env, problem_type,
             fields=fields,
             split=split,
             num_epochs=num_epochs,
+            load_fields=load_fields,
             text_fields=text_fields,
             nontarget_fields=nontarget_fields,
             has_text_input=has_text_input)

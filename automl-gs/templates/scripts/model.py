@@ -20,10 +20,10 @@ if __name__ == '__main__':
     default='standalone')
     args = parser.parse_args()
 
-    cols = [{% for field, _, _  in fields %}
-            "{{ field }}"{{ ", " if not loop.last }}
+    cols = [{% for _, raw_field, _  in fields %}
+            "{{ raw_field }}"{{ ", " if not loop.last }}
             {% endfor %}]
-    dtypes = {{ fields }}
+    dtypes = {{ load_fields }}
 
     df = pd.read_csv(args.data, parse_dates=True,
                      usecols=cols,

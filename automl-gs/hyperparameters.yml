@@ -33,8 +33,8 @@ base:
     type: categorical
     hyperparams:
       - all_binary   # encodes all levels with binary-encoding
-      - top_10perc   # encodes top 10% of levels, encodes rest as "other"
-      - top_50perc   # encodes top 50% of levels, encodes rest as "other"
+      - top10_perc   # encodes top 10% of levels, encodes rest as "other"
+      - top50_perc   # encodes top 50% of levels, encodes rest as "other"
 
 # TensorFlow-only hyperparameters
 
