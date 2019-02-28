@@ -74,6 +74,12 @@ tensorflow:
       - 32
       - 64
       - 128
+  text_embed_size:   # size of Embeddings for text-encoding
+    type: text
+    hyperparams:
+      - 20
+      - 50
+      - 100
   mlp_blocks:   # number of MLP blocks after feature concatenation
     type: base
     hyperparams:

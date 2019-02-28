@@ -9,7 +9,7 @@ def build_model(encoders):
     # Returns
         model: A compiled model which can be used to train or predict.
     """
-    
+
 {% if has_text_input %}
 {% include 'models/' ~ framework ~ '/text.py' %}
 {% endif %}
@@ -20,7 +20,7 @@ def build_model(encoders):
 
 {% endif %}
 {% endfor %}
-
+    # Combine all the inputs into a single layer
     concat = concatenate([
         {% for field, _, field_type in fields %}
         {% if field_type == 'text' %}
@@ -29,10 +29,11 @@ def build_model(encoders):
         input_{{ field }}{{ ", " if not loop.last }}
         {% endif %}
         {% endfor %}
-        ], name='concat')
+    ], name="concat")
 
 {% include 'models/' ~ framework ~ '/mlp.py' %}
 
+    # Build and compile the model.
     model = Model(inputs=[
         {% for field, _, field_type in nontarget_fields %}
         {% if field != target_field %}
