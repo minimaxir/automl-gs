@@ -1,3 +1,4 @@
+        log_loss = log_loss(y_true, y_pred)
         acc = accuracy_score(y_true, y_pred)
         precision = precision_score(y_true, y_pred, average='micro')
         recall = precision_score(y_true, y_pred, average='micro')

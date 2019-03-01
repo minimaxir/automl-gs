@@ -3,11 +3,11 @@
 
 regression:
   ['mse', 'mae', 'msle', 'r_2']
-binary:
-  ['binary_crossentropy', 'accuracy', 'precision', 'recall',
+binary_classification:
+  ['log_loss', 'accuracy', 'precision', 'recall',
   'f1', 'auc']
-categorical:
-  ['categorical_crossentropy', 'accuracy', 'precision', 'recall',
+classification:
+  ['log_loss', 'accuracy', 'precision', 'recall',
   'f1',]
 
 # Regression Metrics

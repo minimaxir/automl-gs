@@ -157,7 +157,8 @@ def print_progress_tqdm(hps, metrics):
 
 
 def render_model(params, model_name, framework, env, problem_type, 
-                 target_metric, target_field, train_folder, fields, split, num_epochs):
+                 target_metric, target_field, train_folder, fields, split, num_epochs,
+                 metrics_path=resource_filename(__name__, "metrics.yml")):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
 
@@ -175,6 +176,9 @@ def render_model(params, model_name, framework, env, problem_type,
     nontarget_fields = [field for field in fields if field[0] != target_field]
     has_text_input = 'text' in [field[2] for field in fields]
 
+    with open(metrics_path) as f:
+        metrics = yaml.load(f)[problem_type]
+
     for file in files:
         script = env.get_template('scripts/' + file).render(
             params=params,
@@ -189,7 +193,8 @@ def render_model(params, model_name, framework, env, problem_type,
             load_fields=load_fields,
             text_fields=text_fields,
             nontarget_fields=nontarget_fields,
-            has_text_input=has_text_input)
+            has_text_input=has_text_input,
+            metrics=metrics)
 
         script = fix_code(script)
 
@@ -197,7 +202,10 @@ def render_model(params, model_name, framework, env, problem_type,
             outfile.write(script)
 
 
-def get_problem_config(target_data, **kwargs):
+def get_problem_config(target_data,
+                       framework,
+                       metrics_path=resource_filename(__name__, "metrics.yml"),
+                       **kwargs):
     """Gets the problem type, target metric, and metric direction, or infers
     them from the data if not expicitly specified.
 
@@ -234,14 +242,15 @@ def get_problem_config(target_data, **kwargs):
         target_metric = 'accuracy'
 
     # Direction
-    with open('metrics.yml') as f:
+    with open(metrics_path) as f:
         metrics = yaml.load(f)
 
     direction = metrics[target_metric]['objective']
+    direction_text = 'minimizing' if direction == 'min' else 'maximizing'
 
-    # Print variables to console for user-level debugging.
-    print("Solving a {} problem, optimizing {}.".format(
-        problem_type, target_metric))
+    # Print config to console for user-level debugging.
+    print("Solving a {} problem, {} {} using {}.".format(
+        problem_type, direction_text, target_metric, framework))
 
     return problem_type, target_metric, direction
 
