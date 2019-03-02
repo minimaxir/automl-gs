@@ -4,6 +4,7 @@ A few notes on why some of the (potentially counterintuitive) architectural and 
 
 ## Overall
 
+* A primary design goal of automl-gs is to help build the *entire* modeling pipeline. The majority of AutoML approaches just handle the training as they are designed more for research-oriented purposes, but in the real world, that's half the battle, and sometimes the *easier* part. A goal of automl-gs is to add more production-oriented features to the generated scripts! (e.g. serving/caching)
 * Yes, one of the major motivations for creating this project is to cheese Kaggle competitions. Many data science thought pieces about building models for Kaggle competition recommended similar ETL steps and architectures done automatically by automl-gs; my hope is that this package **democratizes** the process a bit more, especially with native compatability for Kaggle Kernels. As the README foreword notes, automl-gs is just a baseline that won't win a Kaggle competition on its own, but it should level the playing field.
 * A core design principle is that automl-gs is not required to run the generated scripts. One issue I have with recent well-funded AI startups is their aggressive use of lock-in to keep the customer in their ecosystem, making it hard to deploy your model on cheaper hardware. In my opinion, this lock-in is not a sustainable business practice.
 * I try to avoid using pretrained networks (e.g. for text/images) because they are not user-friendly and may be difficult to run on weaker hardware. Additionally, pretrained approaches assume the destination model architure is similar: for example, GloVe text vectors assume the only model input is a given text; if there are other model inputs, they won't be effective.
@@ -14,14 +15,14 @@ A few notes on why some of the (potentially counterintuitive) architectural and 
 ## ETL Pipeline
 
 * The auto-column type inference is still a work in progress, as there are no consistent heuristics on how to do it accurately; hence why there is an option provide column types explicitly if necessary. Feel free to file an issue if there is a hole in the heuristics.
-* `id`/`uuid` fields are iignored since there is zero statistical insight to gain from their values (if the order when rows are created is important, a `created_at` Datetime field will capture that).
+* `id`/`uuid`/`guid` fields are iignored since there is zero statistical insight to gain from their values (if the order when rows are created is important, a `created_at` Datetime field will capture that).
 * `dayofweek` and `hour` are *always* extracted for datetime fields. `month` and `year` have a possiblity of overfitting in combination with `dayofweek`/`hour`, which is why they are tuned.
 * Multiple input text fields will always use the same encoder / shared model architecture for efficiency.
 * The `quantiles` and `percentiles` strategies for bucketing numeric data are an improvement on the traditional break-data-into-*n*-equal-intervals as it ensures a healthy amount of each input class; numeric data is rarely so uniform.
 
 ## Data Analysis
 
-* In addition to the targeted performance metric, all common metrics for the given problem type are also collected. This may sound excessive, but it's better to be safe than sorry, and the extra metrics can be used as a sanity check.
+* In addition to the targeted performance metric, all common metrics for the given problem type are also collected. This may sound excessive, but it's much better to be safe than sorry, and the extra metrics can be used as a sanity check.
 
 ## Model Training
 
