@@ -109,8 +109,8 @@ def process_data(df):
         df: a pandas DataFrame containing the source data
 
     # Returns
-        A list containing all the processed fields to be fed
-        into the model.
+        A tuple: A list containing all the processed fields to be fed
+        into the model, and the processed target field
     """
 
 {% if has_text_input %}
@@ -124,10 +124,10 @@ def process_data(df):
 
 {% endfor %}
 {% include 'processors/target.py' %}
-    return [{% for field, _, field_type in nontarget_fields %}
+    return ([{% for field, _, field_type in nontarget_fields %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% endfor %}
-        ]
+        ], {{ target_field }}_enc)
 
 
 def model_predict(df, model):
@@ -146,7 +146,7 @@ def model_predict(df, model):
     return model.predict(data_enc)
     {% endif %}
 
-def model_train(df, model, encoders):
+def model_train(df, model, encoders, args):
     """Trains a model, and saves the data locally.
     Also rebuilds the encoders to fit the new data.
 
@@ -155,11 +155,17 @@ def model_train(df, model, encoders):
         model: A compiled model.
     """
     
-    data_enc = process_data(df)
+    X, y = process_data(df)
 
-    target = df['{{ target_field }}'].values
+    meta = meta_callback()
 
-    meta_callback = meta_callback()
+    X_train, X_val, y_train, y_val = train_test_split(X, y,
+                                        random_state=123,
+                                        train_size=args['train_size'],
+                                        stratify={% if problem_type = 'regression' %}None{% else %}y{% endif %})
+
+    model.fit(X_train, y_train, validation_data=(X_val, y_val),
+                callbacks=[meta])
 
 {% include 'callbacks/' ~ framework ~ '.py' %}
 

@@ -3,10 +3,11 @@ class meta_callback(Callback):
     and logs after each training epoch.
     """
 
-    def on_train_begin(self, logs={}):
-        self.f = open('metadata/results.csv', 'w')
+    def __init__(self, args):
+        self.f = open(os.path.join('metadata',/'results.csv'), 'w')
         self.w= csv.writer(self.f)
-        self.w.writerow(['epoch'] + {{ metrics }})
+        self.w.writerow(['epoch', 'time_completed'] + {{ metrics }})
+        self.in_automl = args['context'] == 'automl-gs'
 
     def on_train_end(self, logs={}):
         self.f.close()
@@ -17,10 +18,11 @@ class meta_callback(Callback):
 
         {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
 
-        self.w.writerow([epoch+1] + metrics)
+        time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.now())
+        self.w.writerow([epoch+1, time_completed] + metrics)
 
         # Only run while using automl-gs, which tells it an epoch is finished
         # and data is recorded.
-        if args['context'] == 'automl-gs':
+        if self.in_automl:
             sys.stdout.flush()
             print("EPOCH_END")

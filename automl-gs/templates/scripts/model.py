@@ -36,7 +36,7 @@ if __name__ == '__main__':
         build_encoders(df)
         encoders = load_encoders()
         model = build_model(encoders)
-        model_train(data_tf, model)
+        model_train(data_tf, model, args)
     elif args.mode == 'predict':
         encoders = load_encoders()
         model = build_model(encoders)

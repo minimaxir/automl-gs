@@ -31,7 +31,7 @@ env = Environment(
     lstrip_blocks=True
 )
 
-df = pd.read_csv(csv_path)
+df = pd.read_csv(csv_path, nrows=100)
 object_cols = [col for col, col_type in df.dtypes.iteritems() if col_type == 'object']
 df[object_cols] = df[object_cols].apply(pd.to_datetime, errors='ignore')
 
@@ -49,6 +49,8 @@ timeformat_utc = "{:%Y%m%d_%H%M%S}".format(datetime.utcnow())
 train_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
 if not os.path.exists(train_folder):
     os.mkdir(train_folder)
+    os.mkdir(os.path.join(train_folder, 'metadata'))
+    os.mkdir(os.path.join(train_folder, 'results'))
 cmd = build_subprocess_cmd(csv_path, train_folder)
 
 

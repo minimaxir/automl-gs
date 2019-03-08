@@ -262,9 +262,10 @@ def build_subprocess_cmd(csv_path, train_folder):
     since they are defaulted in the generated code.
     """
 
-    return ["cd", "/{}".format(train_folder), "&&",
+    return ["cd", "{}".format(train_folder), "&&",
             "-d", "../{}".format(csv_path),
-            "-m", "train"]
+            "-m", "train",
+            "-c", "automl-gs"]
 
 
 def train_generated_model(cmd, num_epochs):
