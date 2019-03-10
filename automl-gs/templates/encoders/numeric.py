@@ -15,12 +15,14 @@
     {% if params['numeric_strat'] in ['minmax', 'standard'] %}
     {{ field }}_encoder.fit(df['{{ field }}'].values)
 
-    with open('encoders/{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
+    with open(os.path.join('encoders', '{{ field }}_encoder.json'),
+              'w', encoding='utf8') as outfile:
         json.dump({{ field }}_encoder._attrs, outfile, ensure_ascii=False)
     {% endif %}
 
     {% if params['numeric_strat'] in ['quantiles', 'percentiles'] %}
-    with open('encoders/{{ field }}_bins.json', 'w', encoding='utf8') as outfile:
+    with open(os.path.join('encoders', '{{ field }}_bins.json'),
+              'w', encoding='utf8') as outfile:
         json.dump({{ field }}_bins, outfile, ensure_ascii=False)
     {% endif %}
     

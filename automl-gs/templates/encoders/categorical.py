@@ -17,7 +17,8 @@
     {{ field }}_encoder.fit({{ field }}_tf)
     {% endif %}
 
-    with open('encoders/{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
+    with open(os.path.join('encoders', '{{ field }}_encoder.json'),
+             'w', encoding='utf8') as outfile:
         json.dump({{ field }}_encoder.classes_, outfile, ensure_ascii=False)
     
 

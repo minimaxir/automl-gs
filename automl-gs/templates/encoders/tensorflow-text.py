@@ -6,6 +6,7 @@
         {% endfor %}
     ], axis=1).values)
 
-    with open('encoders/model_vocab.json', 'w', encoding='utf8') as outfile:
+    with open(os.path.join('encoders', 'model_vocab.json'),
+              'w', encoding='utf8') as outfile:
         json.dump(tokenizer.word_index, outfile, ensure_ascii=False)
 

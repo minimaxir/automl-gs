@@ -7,6 +7,7 @@
     {% endif %}
     {{ target_field }}_encoder.fit(df['{{ target_field }}'].values)
 
-    with open('encoders/{{ target_field }}_encoder.json', 'w', encoding='utf8') as outfile:
+    with open(os.path.join('encoders', '{{ target_field }}_encoder.json'),
+              'w', encoding='utf8') as outfile:
         json.dump({{ target_field }}_encoder.classes_, outfile, ensure_ascii=False)
     {% endif %}

@@ -4,7 +4,7 @@ class meta_callback(Callback):
     """
 
     def __init__(self, args):
-        self.f = open(os.path.join('metadata',/'results.csv'), 'w')
+        self.f = open(os.path.join('metadata', 'results.csv'), 'w')
         self.w= csv.writer(self.f)
         self.w.writerow(['epoch', 'time_completed'] + {{ metrics }})
         self.in_automl = args['context'] == 'automl-gs'

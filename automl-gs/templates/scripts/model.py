@@ -1,6 +1,5 @@
 {% include 'imports/model.py' %}
 
-# Main script which calls other model functions.
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
