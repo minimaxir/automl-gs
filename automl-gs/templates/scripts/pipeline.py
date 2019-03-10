@@ -22,7 +22,7 @@ def build_model(encoders):
 {% endfor %}
     # Combine all the inputs into a single layer
     concat = concatenate([
-        {% for field, _, field_type in fields %}
+        {% for field, _, field_type in nontarget_fields %}
         {% if field_type == 'text' %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% else %}
@@ -70,6 +70,7 @@ def build_encoders(df):
 {% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'encoders/' ~ field_type ~ '.py' %}
+
 {% endif %}
 
 {% endfor %}
@@ -91,6 +92,7 @@ def load_encoders():
 {% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
 {% include 'loaders/' ~ field_type ~ '.py' %}
+
 {% endif %}
 
 {% endfor %}
@@ -157,12 +159,12 @@ def model_train(df, model, encoders, args):
     
     X, y = process_data(df)
 
-    meta = meta_callback()
+    meta = meta_callback(args)
 
     X_train, X_val, y_train, y_val = train_test_split(X, y,
                                         random_state=123,
                                         train_size=args['train_size'],
-                                        stratify={% if problem_type = 'regression' %}None{% else %}y{% endif %})
+                                        stratify={% if problem_type == 'regression' %}None{% else %}y{% endif %})
 
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
                 callbacks=[meta])

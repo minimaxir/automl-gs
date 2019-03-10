@@ -6,6 +6,7 @@ from pkg_resources import resource_filename
 import tqdm
 from subprocess import Popen, PIPE, CalledProcessError
 from autopep8 import fix_code
+from collections import OrderedDict
 
 
 def get_input_types(df, col_types, target_field):
@@ -26,7 +27,7 @@ def get_input_types(df, col_types, target_field):
     nrows = df.shape[0]
     avg_spaces = -1
 
-    field_types = {}
+    field_types = OrderedDict()
 
     for field in fields:
         if field in col_types:
@@ -95,8 +96,8 @@ def normalize_col_names(input_types):
     """
 
     pattern = re.compile('\W+')
-    fields = {(re.sub(pattern, '_', field.lower()), field, field_type)
-                   for field, field_type in input_types.items()}
+    fields = [(re.sub(pattern, '_', field.lower()), field, field_type)
+                   for field, field_type in input_types.items()]
 
     return fields
 

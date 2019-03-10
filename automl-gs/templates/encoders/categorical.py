@@ -1,5 +1,4 @@
     # {{ field_raw }}
-    {{ field }}_tf = df['{{ field_raw }}'].values
     {% if params['categorical_strat'] != 'all_binary' %}
     {{ field }}_counts = df['{{ field_raw }}'].value_counts()
     {% if params['categorical_strat'] == 'top10_perc' %}
@@ -13,6 +12,7 @@
     {{ field }}_encoder.fit({{ field }}_top)
     {% endif %}
     {% if params['categorical_strat'] == 'all_binary' %}
+    {{ field }}_tf = df['{{ field_raw }}'].values
     {{ field }}_encoder = LabelBinarizer()
     {{ field }}_encoder.fit({{ field }}_tf)
     {% endif %}
@@ -20,3 +20,4 @@
     with open('encoders/{{ field }}_encoder.json', 'w', encoding='utf8') as outfile:
         json.dump({{ field }}_encoder.classes_, outfile, ensure_ascii=False)
     
+

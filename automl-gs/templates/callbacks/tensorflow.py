@@ -18,7 +18,7 @@ class meta_callback(Callback):
 
         {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
 
-        time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.now())
+        time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.utcnow())
         self.w.writerow([epoch+1, time_completed] + metrics)
 
         # Only run while using automl-gs, which tells it an epoch is finished
