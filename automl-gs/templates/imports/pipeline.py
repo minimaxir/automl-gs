@@ -1,12 +1,19 @@
 import pandas as pd
+import numpy as np
 import json
 import os
 import csv
 from sklearn.preprocessing import LabelBinarizer, LabelEncoder, StandardScaler, MinMaxScaler
+from sklearn.model_selection import ShuffleSplit, StratifiedShuffleSplit
 {% if framework == 'tensorflow' %}
-from tf.keras.preprocessing import Tokenizer
-from tf.keras.layers import Input, Embedding, SpatialDropout1D, LSTM, CuDNNLSTM, GRU, CuDNNGRU, concatenate, Dense, BatchNormalization, Dropout, AlphaDropout
-from tf.keras import backend as K
-from tf.contrib.opt import AdamWOptimizer
-from tf.train import cosine_decay
+import tensorflow as tf
+from tensorflow.keras.preprocessing.text import Tokenizer
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.callbacks import Callback
+from tensorflow.keras.regularizers import l2
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Embedding, SpatialDropout1D, LSTM, CuDNNLSTM, GRU, CuDNNGRU, concatenate, Dense, BatchNormalization, Dropout, AlphaDropout
+from tensorflow.keras import backend as K
+from tensorflow.contrib.opt import AdamWOptimizer
+from tensorflow.train import cosine_decay
 {% endif %}

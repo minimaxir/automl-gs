@@ -1,13 +1,9 @@
     # {{ field_raw }}
-    {{ field }}_dayofweeks = pd.to_datetime(df['{{ field }}']).dt.dayofweek
     dayofweeks_encoder = LabelBinarizer()
     dayofweeks_encoder.classes_ = list(range(7))
-    {{ field }}_dayofweeks = dayofweeks_encoder.transform({{ field }}_dayofweeks)
 
-    {{ field }}_hour = pd.to_datetime(df['{{ field }}']).dt.hour
     hour_encoder = LabelBinarizer()
     hour_encoder.classes_ = list(range(24))
-    {{ field }}_hour = hour_encoder.transform({{ field }}_hour)
 
     {% if params['datetime_month'] %}
     {{ field }}_month = pd.to_datetime(df['{{ field }}']).dt.month - 1
@@ -20,6 +16,10 @@
     {{ field }}_year = pd.to_datetime(df['{{ field }}']).dt.year
     {{ field }}_year_encoder = LabelBinarizer()
     {{ field }}_year = {{ field }}_year_encoder.fit_transform({{ field }}_year)
+
+    with open(os.path.join('encoders', '{{ field }}_year_encoder.json'),
+            'w', encoding='utf8') as outfile:
+        json.dump({{ field }}_year_encoder.classes_.tolist(), outfile, ensure_ascii=False)
     {% endif %}
 
     {% if params['datetime_holiday'] %}

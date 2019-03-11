@@ -1,5 +1,5 @@
     # {{ field_raw }}
-    {{ field }}_enc = df['{{ field_raw }}'].values
+    {{ field }}_enc = df['{{ field_raw }}']
     {% if params['numeric_strat'] == 'minmax' %}
     {{ field }}_encoder = MinMaxScaler()
     {% endif %}
@@ -23,6 +23,6 @@
     {% if params['numeric_strat'] in ['quantiles', 'percentiles'] %}
     with open(os.path.join('encoders', '{{ field }}_bins.json'),
               'w', encoding='utf8') as outfile:
-        json.dump({{ field }}_bins, outfile, ensure_ascii=False)
+        json.dump({{ field }}_bins.tolist(), outfile, ensure_ascii=False)
     {% endif %}
     

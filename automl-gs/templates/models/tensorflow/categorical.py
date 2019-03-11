@@ -1,3 +1,3 @@
     # {{ field_raw }}
-    input_{{ field }} = Input(shape=(encoders['{{ field }}_encoder'].classes_.shape[0],), name="input_{{ field }}")
+    input_{{ field }} = Input(shape=(len(encoders['{{ field }}_encoder'].classes_),), name="input_{{ field }}")
 

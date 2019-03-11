@@ -25,8 +25,14 @@ def build_model(encoders):
         {% for field, _, field_type in nontarget_fields %}
         {% if field_type == 'text' %}
         {{ field }}_enc{{ ", " if not loop.last }}
-        {% else %}
+        {% elif field_type != 'datetime' %}
         input_{{ field }}{{ ", " if not loop.last }}
+        {% else %}
+        input_dayofweeks_{{ field }},
+        input_hours_{{ field }}{{ ", " if not loop.last and not params['datetime_month']}}
+        {% if params['datetime_month'] %}
+        ,input_month_{{ field }}{{ ", " if not loop.last }}
+        {% endif %}
         {% endif %}
         {% endfor %}
     ], name="concat")
@@ -36,18 +42,21 @@ def build_model(encoders):
     # Build and compile the model.
     model = Model(inputs=[
         {% for field, _, field_type in nontarget_fields %}
-        {% if field != target_field %}
+        {% if field_type != 'datetime' and field != target_field %}
         input_{{ field }}{{ ", " if not loop.last }}
+        {% elif field != target_field  %}
+        input_dayofweeks_{{ field }},
+        input_hours_{{ field }}{{ ", " if not loop.last and not params['datetime_month']}}
+        {% if params['datetime_month'] %}
+        ,input_month_{{ field }}{{ ", " if not loop.last }}
+        {% endif %}
         {% endif %}
         {% endfor %}
                 ],
                       outputs=[output])
 
-    global_step = tf.Variable(0, trainable=False)
-    lr_decayed = cosine_decay({{ params[
-        'base_lr'] }}, global_step, 1000)
-    model.compile(loss=hybrid_loss,
-              optimizer=AdamWOptimizer(learning_rate = lr_decayed,
+    model.compile(loss={% include 'models/' ~ framework ~ '/loss.py' %},
+              optimizer=AdamWOptimizer(learning_rate = {{ params['base_lr'] }},
                                         weight_decay = {{ params['weight_decay'] }}))
 
     return model
@@ -100,7 +109,7 @@ def load_encoders():
 
     return encoders
 
-def process_data(df):
+def process_data(df, encoders):
     """Processes an input DataFrame into a format
     sutable for model prediction.
 
@@ -127,7 +136,15 @@ def process_data(df):
 {% endfor %}
 {% include 'processors/target.py' %}
     return ([{% for field, _, field_type in nontarget_fields %}
+        {% if field_type != 'datetime' %}
         {{ field }}_enc{{ ", " if not loop.last }}
+        {% else %}
+        {{ field }}_dayofweeks_enc,
+        {{ field }}_hour_enc{{ ", " if not loop.last and not params['datetime_month']}}
+        {% if params['datetime_month'] %}
+        ,{{ field }}_month_enc{{ ", " if not loop.last }}
+        {% endif %}
+        {% endif %}
         {% endfor %}
         ], {{ target_field }}_enc)
 
@@ -150,24 +167,30 @@ def model_predict(df, model):
 
 def model_train(df, model, encoders, args):
     """Trains a model, and saves the data locally.
-    Also rebuilds the encoders to fit the new data.
 
     # Arguments
         df: A pandas DataFrame containing the source data.
         model: A compiled model.
     """
     
-    X, y = process_data(df)
-
+    X, y = process_data(df, encoders)
+    
     meta = meta_callback(args)
 
-    X_train, X_val, y_train, y_val = train_test_split(X, y,
-                                        random_state=123,
-                                        train_size=args['train_size'],
-                                        stratify={% if problem_type == 'regression' %}None{% else %}y{% endif %})
+    {% if problem_type == 'regression' %}
+    split = ShuffleSplit(n_splits=1, train_size=args.split, test_size=None, random_state=123)
+    {% else %}
+    split = StratifiedShuffleSplit(n_splits=1, train_size=args.split, test_size=None, random_state=123)
+    {% endif %}
+
+    for train_indices, val_indices in split.split(np.zeros(y.shape[0]), y):
+        X_train = [field[train_indices,] for field in X]
+        X_val = [field[val_indices,] for field in X]
+        y_train = y[train_indices,]
+        y_val = y[val_indices,]
 
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
-                callbacks=[meta])
+                epochs=args.epochs)
 
 {% include 'callbacks/' ~ framework ~ '.py' %}
 

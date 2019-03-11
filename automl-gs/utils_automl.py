@@ -2,6 +2,7 @@ import re
 import pandas as pd
 import random
 import yaml
+import os
 from pkg_resources import resource_filename
 import tqdm
 from subprocess import Popen, PIPE, CalledProcessError
@@ -260,11 +261,14 @@ def build_subprocess_cmd(csv_path, train_folder):
     """Builds the command used to call a subprocess for model training.
 
     Other parameters like split and num_epochs are not passed
-    since they are defaulted in the generated code.
+    since they are the default in the generated code.
     """
 
-    return ["cd", "{}".format(train_folder), "&&",
-            "-d", "../{}".format(csv_path),
+    csv_path_join = os.path.join('..', csv_path)
+
+    return ["cd", train_folder, "&&",
+            "python3", "model.py",
+            "-d", csv_path_join,
             "-m", "train",
             "-c", "automl-gs"]
 

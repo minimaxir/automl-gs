@@ -7,14 +7,15 @@ class meta_callback(Callback):
         self.f = open(os.path.join('metadata', 'results.csv'), 'w')
         self.w= csv.writer(self.f)
         self.w.writerow(['epoch', 'time_completed'] + {{ metrics }})
-        self.in_automl = args['context'] == 'automl-gs'
+        self.in_automl = args.context == 'automl-gs'
 
     def on_train_end(self, logs={}):
         self.f.close()
 
     def on_epoch_end(self, epoch, logs={}):
-        y_true = self.model.validation_data[1]
-        y_pred = self.model.predict(self.model.validation_data[0])
+        print(dir(self.model))
+        y_true = self.validation_data[1]
+        y_pred = self.model.predict(self.validation_data[0])
 
         {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
 

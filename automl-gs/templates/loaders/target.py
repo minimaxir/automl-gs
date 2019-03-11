@@ -8,6 +8,6 @@
 
     with open(os.path.join('encoders', '{{ target_field }}_encoder.json'),
               'r', encoding='utf8', errors='ignore') as infile:
-        {{ target_field }}_encoder._attrs = json.load(infile)
+        {{ target_field }}_encoder.classes_ = np.array(json.load(infile))
     encoders['{{ target_field }}_encoder'] = {{ target_field }}_encoder
     {% endif %}

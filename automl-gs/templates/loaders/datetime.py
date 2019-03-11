@@ -1,24 +1,24 @@
     # {{ field_raw }}
-    {{ field }}_dayofweeks = pd.to_datetime(df['{{ field_raw }}']).dt.dayofweek
     dayofweeks_encoder = LabelBinarizer()
     dayofweeks_encoder.classes_ = list(range(7))
     encoders['dayofweeks_encoder'] = dayofweeks_encoder
 
-    {{ field }}_hour = pd.to_datetime(df['{{ field_raw }}']).dt.hour
     hour_encoder = LabelBinarizer()
     hour_encoder.classes_ = list(range(24))
     encoders['hour_encoder'] = hour_encoder
 
     {% if params['datetime_month'] %}
-    {{ field }}_month = pd.to_datetime(df['{{ field_raw }}']).dt.month - 1
     month_encoder = LabelBinarizer()
     month_encoder.classes_ = list(range(12))
     encoders['month_encoder'] = month_encoder
     {% endif %}
 
     {% if params['datetime_year'] %}
-    {{ field }}_year = pd.to_datetime(df['{{ field_raw }}']).dt.year
+
     {{ field }}_year_encoder = LabelBinarizer()
+    with open(os.path.join('encoders', '{{ field }}_year_encoder.json'),
+            'r', encoding='utf8', errors='ignore') as infile:
+        {{ field }}_year_encoder._classes = json.load(infile)
     encoders['{{ field }}_year_encoder'] = {{ field }}_year_encoder
     {% endif %}
 

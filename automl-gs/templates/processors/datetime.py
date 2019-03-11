@@ -2,8 +2,8 @@
     {{ field }}_dayofweeks_enc = pd.to_datetime(df['{{ field_raw }}']).dt.dayofweek
     {{ field }}_dayofweeks_enc = encoders['dayofweeks_encoder'].transform({{ field }}_dayofweeks_enc)
 
-    {{ field }}_hour = pd.to_datetime(df['{{ field_raw }}']).dt.hour
-    {{ field }}_hour = encoders['hour_encoder'].transform({{ field }}_hour)
+    {{ field }}_hour_enc = pd.to_datetime(df['{{ field_raw }}']).dt.hour
+    {{ field }}_hour_enc = encoders['hour_encoder'].transform({{ field }}_hour_enc)
 
     {% if params['datetime_month'] %}
     {{ field }}_month_enc = pd.to_datetime(df['{{ field_raw }}']).dt.month - 1

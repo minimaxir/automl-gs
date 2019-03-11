@@ -9,5 +9,5 @@
 
     with open(os.path.join('encoders', '{{ target_field }}_encoder.json'),
               'w', encoding='utf8') as outfile:
-        json.dump({{ target_field }}_encoder.classes_, outfile, ensure_ascii=False)
+        json.dump({{ target_field }}_encoder.classes_.tolist(), outfile, ensure_ascii=False)
     {% endif %}

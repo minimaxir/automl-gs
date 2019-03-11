@@ -4,7 +4,7 @@
         {% for field, field_raw, _ in text_fields %}
         df['{{ field_raw }}']{{ ", " if not loop.last }}
         {% endfor %}
-    ], axis=1).values)
+    ], axis=0).tolist())
 
     with open(os.path.join('encoders', 'model_vocab.json'),
               'w', encoding='utf8') as outfile:
