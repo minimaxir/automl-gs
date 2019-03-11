@@ -4,8 +4,8 @@
 regression:
   ['mse', 'mae', 'msle', 'r_2']
 binary_classification:
-  ['log_loss', 'accuracy', 'precision', 'recall',
-  'f1', 'auc']
+  ['log_loss', 'accuracy', 'auc', 'precision', 'recall',
+  'f1']
 classification:
   ['log_loss', 'accuracy', 'precision', 'recall',
   'f1',]

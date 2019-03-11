@@ -174,8 +174,6 @@ def model_train(df, model, encoders, args):
     """
     
     X, y = process_data(df, encoders)
-    
-    meta = meta_callback(args)
 
     {% if problem_type == 'regression' %}
     split = ShuffleSplit(n_splits=1, train_size=args.split, test_size=None, random_state=123)
@@ -189,8 +187,11 @@ def model_train(df, model, encoders, args):
         y_train = y[train_indices,]
         y_val = y[val_indices,]
 
+    meta = meta_callback(args, X_val, y_val)
+
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
-                epochs=args.epochs)
+                epochs=args.epochs,
+                callbacks=[meta])
 
 {% include 'callbacks/' ~ framework ~ '.py' %}
 
