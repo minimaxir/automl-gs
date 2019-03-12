@@ -4,9 +4,10 @@ import json
 import os
 import csv
 from datetime import datetime
+from math import floor
 from sklearn.preprocessing import LabelBinarizer, LabelEncoder, StandardScaler, MinMaxScaler
 from sklearn.model_selection import ShuffleSplit, StratifiedShuffleSplit
-from sklearn.metrics import log_loss, accuracy_score, precision_score, f1_score, roc_curve, auc
+from sklearn.metrics import log_loss, accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
 {% if framework == 'tensorflow' %}
 import tensorflow as tf
 from tensorflow.keras.preprocessing.text import Tokenizer

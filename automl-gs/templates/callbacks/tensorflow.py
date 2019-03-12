@@ -20,12 +20,8 @@ class meta_callback(Callback):
 
         {% if problem_type == 'classification' %}
         y_pred_label = np.zeros(y_pred.shape)
-        y_pred_label[:, y_pred.argmax(axis=1)] = 1
+        y_pred_label[np.arange(y_pred.shape[0]), y_pred.argmax(axis=1)] = 1
         {% endif %}
-
-        print(y_pred)
-        # print(y_pred.shape)
-        print(y_pred_label)
 
         {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
 
