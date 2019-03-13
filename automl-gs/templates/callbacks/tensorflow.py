@@ -13,6 +13,7 @@ class meta_callback(Callback):
 
     def on_train_end(self, logs={}):
         self.f.close()
+        self.model.save_weights('model_weights.hdf5')
 
     def on_epoch_end(self, epoch, logs={}):
         y_true = self.y_val

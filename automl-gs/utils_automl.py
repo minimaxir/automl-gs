@@ -104,6 +104,7 @@ def normalize_col_names(input_types):
 
 
 def build_hp_grid(framework, types, num_trials,
+                  problem_type,
                   hp_path=resource_filename(__name__, "hyperparameters.yml")):
     """Builds the hyperparameter grid for model grid search.
 
@@ -124,7 +125,8 @@ def build_hp_grid(framework, types, num_trials,
     # the data and framework of choice
     hps = dict(hps['base'], **hps[framework])
     keys = [key for key in hps.keys() if (hps[key]['type'] in types
-                                          or hps[key]['type'] == 'base')]
+                                          or hps[key]['type'] == 'base'
+                                          or hps[key]['type'] == problem_type)]
     values = [hps[key]['hyperparams'] for key in keys]
 
     grid = set()

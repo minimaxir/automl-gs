@@ -2,7 +2,7 @@
 # `objective` specifies which direction to go for optimization.
 
 regression:
-  ['mse', 'mae', 'msle', 'r_2']
+  ['mse', 'mae', 'r_2']
 binary_classification:
   ['log_loss', 'accuracy', 'auc', 'precision', 'recall',
   'f1']
