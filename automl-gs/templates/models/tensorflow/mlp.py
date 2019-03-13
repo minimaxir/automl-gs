@@ -4,7 +4,7 @@
     output = Dense(1, name="output", kernel_regularizer={{ params['output_regularizer'] }})(hidden)
     {% endif %}
 
-    {% if problem_type == 'binary' %}
+    {% if problem_type == 'binary_classification' %}
     output = Dense(1, activation="sigmoid", name="output", kernel_regularizer={{ params['output_regularizer'] }})(hidden)
     {% endif %}
 

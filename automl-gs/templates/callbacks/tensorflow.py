@@ -19,7 +19,7 @@ class meta_callback(Callback):
         y_true = self.y_val
         y_pred = self.model.predict(self.X_val)
 
-        {% if problem_type == 'classification' %}
+        {% if problem_type != 'regression' %}
         y_pred_label = np.zeros(y_pred.shape)
         y_pred_label[np.arange(y_pred.shape[0]), y_pred.argmax(axis=1)] = 1
         {% endif %}
