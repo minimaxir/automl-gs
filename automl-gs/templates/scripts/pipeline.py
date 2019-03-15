@@ -63,10 +63,11 @@ def build_model(encoders):
 
 
 def build_encoders(df):
-    """Builds encoders for necessary fields to be used when
-    transforming data for the model.
+    """Builds encoders for fields to be used when
+    processing data for the model.
 
-    All encoder specifications are stored locally as .json files.
+    All encoder specifications are stored in locally
+    in /encoders as .json files.
 
     # Arguments
         df: A pandas DataFrame containing the data.
@@ -89,7 +90,7 @@ def load_encoders():
     """Loads the encoders built during `build_encoders`.
 
     # Returns
-        encoders: A dict of encoder objects.
+        encoders: A dict of encoder objects/specs.
     """
 
     encoders = {}
@@ -117,11 +118,12 @@ def process_data(df, encoders):
     `build_encoders`.
 
     # Arguments
-        df: a pandas DataFrame containing the source data
+        df: a DataFrame containing the source data
+        encoders: a dict of encoders to process the data.
 
     # Returns
         A tuple: A list containing all the processed fields to be fed
-        into the model, and the processed target field
+        into the model, and the processed target field.
     """
 
 {% if has_text_input %}
@@ -160,7 +162,7 @@ def model_predict(df, model):
         A numpy array of predictions.
     """
 
-    data_enc = process_data(df)
+    data_enc = process_data(df)[0]
     {% if framework == 'tensorflow' %}
     return model.predict(data_enc)
     {% endif %}

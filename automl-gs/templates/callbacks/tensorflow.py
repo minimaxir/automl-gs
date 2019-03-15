@@ -1,6 +1,8 @@
 class meta_callback(Callback):
     """Keras Callback used during model training to save current weights
-    and logs after each training epoch.
+    and metrics after each training epoch.
+
+    Metrics metadata is saved in the /metadata folder.
     """
 
     def __init__(self, args, X_val, y_val):
