@@ -158,22 +158,31 @@ def process_data(df, encoders, process_target=True):
     return data_enc
 
 
-def model_predict(df, model, encoders, process_target=True):
+def model_predict(df, model, encoders, mode='proba'):
     """Generates predictions for a trained model.
 
     # Arguments
         df: A pandas DataFrame containing the source data.
         model: A compiled model.
         encoders: a dict of encoders to process the data.
-        process_target: boolean to determine if the target should be encoded.
 
     # Returns
         A numpy array of predictions.
     """
 
-    data_enc = process_data(df)[0]
+    data_enc = process_data(df, encoders, process_target=False)
     {% if framework == 'tensorflow' %}
-    return model.predict(data_enc)
+    {% if problem_type == 'classification' %}
+    headers = encoders['{{ target_field }}_encoder'].classes_
+    {% elif problem_type == 'binary_classification' %}
+    headers = ['probability']
+    {% else %}
+    headers = ['{{ target_field }}']
+    {% endif %}
+    predictions =  pd.DataFrame(model.predict(data_enc), columns=headers)
+
+    return predictions
+    
     {% endif %}
 
 def model_train(df, model, encoders, args):
