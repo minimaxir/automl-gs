@@ -17,6 +17,9 @@ if __name__ == '__main__':
     parser.add_argument(
     '-c', '--context',  help="Context for running script (used during automl-gs training)",
     default='standalone')
+    parser.add_argument(
+    '-t', '--type',  help="Format for predictions (either csv or json)",
+    default='csv')
     args = parser.parse_args()
 
     cols = [{% for _, raw_field, _  in fields %}
@@ -38,4 +41,8 @@ if __name__ == '__main__':
         model = build_model(encoders)
         model.load_weights('model_weights.hdf5')
         predictions = model_predict(df, model, encoders)
-        predictions.to_csv('predictions.csv', index=False)
+        if args.type == 'csv':
+            predictions.to_csv('predictions.csv', index=False)
+        if args.type =='json':
+            with open('predictions.json', 'w', encoding='utf-8') as f:
+                f.write(predictions.to_json(orient="records"))

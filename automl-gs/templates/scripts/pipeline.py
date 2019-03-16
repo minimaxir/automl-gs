@@ -158,7 +158,7 @@ def process_data(df, encoders, process_target=True):
     return data_enc
 
 
-def model_predict(df, model, encoders, mode='proba'):
+def model_predict(df, model, encoders):
     """Generates predictions for a trained model.
 
     # Arguments
