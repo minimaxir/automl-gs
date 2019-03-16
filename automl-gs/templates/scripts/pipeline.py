@@ -110,7 +110,7 @@ def load_encoders():
 
     return encoders
 
-def process_data(df, encoders):
+def process_data(df, encoders, process_target=True):
     """Processes an input DataFrame into a format
     sutable for model prediction.
 
@@ -120,6 +120,7 @@ def process_data(df, encoders):
     # Arguments
         df: a DataFrame containing the source data
         encoders: a dict of encoders to process the data.
+        process_target: boolean to determine if the target should be encoded.
 
     # Returns
         A tuple: A list containing all the processed fields to be fed
@@ -136,8 +137,8 @@ def process_data(df, encoders):
 {% endif %}
 
 {% endfor %}
-{% include 'processors/target.py' %}
-    return ([{% for field, _, field_type in nontarget_fields %}
+
+    data_enc = [{% for field, _, field_type in nontarget_fields %}
         {% if field_type != 'datetime' %}
         {{ field }}_enc{{ ", " if not loop.last }}
         {% else %}
@@ -148,15 +149,23 @@ def process_data(df, encoders):
         {% endif %}
         {% endif %}
         {% endfor %}
-        ], {{ target_field }}_enc)
+        ]
+
+    if process_target:
+{% include 'processors/target.py' %}
+        return (data_enc, {{ target_field }}_enc)
+
+    return data_enc
 
 
-def model_predict(df, model):
+def model_predict(df, model, encoders, process_target=True):
     """Generates predictions for a trained model.
 
     # Arguments
         df: A pandas DataFrame containing the source data.
         model: A compiled model.
+        encoders: a dict of encoders to process the data.
+        process_target: boolean to determine if the target should be encoded.
 
     # Returns
         A numpy array of predictions.

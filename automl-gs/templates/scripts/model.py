@@ -37,5 +37,5 @@ if __name__ == '__main__':
         encoders = load_encoders()
         model = build_model(encoders)
         model.load_weights('model_weights.hdf5')
-        predictions = model_predict(df, model, encoders)
+        predictions = model_predict(df, model, encoders, False)
         pd.DataFrame(predictions).to_csv('predictions.csv', index=False)
