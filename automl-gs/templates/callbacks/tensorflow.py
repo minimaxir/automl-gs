@@ -35,4 +35,4 @@ class meta_callback(Callback):
         # and data is recorded.
         if self.in_automl:
             sys.stdout.flush()
-            print("EPOCH_END")
+            print("\nEPOCH_END")

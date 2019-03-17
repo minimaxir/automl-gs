@@ -39,22 +39,24 @@ problem_type, target_metric, direction = get_problem_config(
     df[target_field], framework, **kwargs)
 input_types = get_input_types(df, col_types, target_field)
 hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
-
 fields = normalize_col_names(input_types)
 
-pbar = tqdm(hp_grid)
-metrics_csv = open("metrics.csv", 'w')
+metrics_csv = open("automl_results.csv", 'w')
 best_result = -1
 timeformat_utc = "{:%Y%m%d_%H%M%S}".format(datetime.utcnow())
-train_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
-if not os.path.exists(train_folder):
-    os.mkdir(train_folder)
-    os.mkdir(os.path.join(train_folder, 'metadata'))
-    os.mkdir(os.path.join(train_folder, 'results'))
+best_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
+train_folder = "{}_train".format(model_name)
 cmd = build_subprocess_cmd(csv_path, train_folder)
 
-
+pbar = tqdm(hp_grid)
 for params in pbar:
+
+    # Create destination folders for the model scripts + metadata
+    if not os.path.exists(train_folder):
+        os.mkdir(train_folder)
+        os.mkdir(os.path.join(train_folder, 'metadata'))
+        os.mkdir(os.path.join(train_folder, 'encoders'))
+
     # Generate model files according to the given hyperparameters.
     render_model(params, model_name,
                  framework, env, problem_type,
@@ -62,14 +64,16 @@ for params in pbar:
                  train_folder, fields, split, num_epochs)
 
     # Execute model training using the generated files.
-    train_generated_model(cmd, num_epochs)
+    train_generated_model(cmd, num_epochs, train_folder)
 
     # Load the training results from the generated CSV,
     # and append to the metrics CSV.
-    results = pd.read_csv("{}/metadata/results.csv".format(train_folder))
-    results['trial_id'] = uuid.uuid4().hex
+    results = pd.read_csv(os.path.join(train_folder, 
+                                       "metadata", "results.csv"))
+    results.insert(0, 'trial_id', uuid.uuid4())
 
-    results.to_csv("metrics_csv", mode="a")
+    results.to_csv("automl_results.csv", mode="a", index=False,
+                   header=(best_result == -1))
 
     # If the target metric improves, save the new hps/files,
     # update the hyperparameters in console,
@@ -82,36 +86,16 @@ for params in pbar:
 
     if best_result == -1:   # if first iteration
         best_result = top_result
-        shutil.copytree(train_folder, "{}_best".format(train_folder))
+        shutil.copytree(train_folder, best_folder)
     else:
         is_imp = best_result > top_result
         is_imp = not is_imp if direction == 'min' else is_imp
         if is_imp:
-            shutil.copytree(train_folder, "{}_best".format(train_folder))
+            shutil.rmtree(best_folder)
+            shutil.copytree(train_folder, best_folder)
 
     # Clean up the generated file folder for the next trial.
     shutil.rmtree(train_folder)
 
-
 metrics_csv.close()
 pbar.close()
-
-
-# If running standalone, return results to parent function.
-
-
-def create_model_script(csv_path, target_field, problem_type,
-                        hps,
-                        framework='tensorflow',
-                        context='standalone'):
-    """Renders the model scripts from Jinja templates.
-    """
-
-# Render pipeline.py.
-
-
-pipeline = fix_code(pipeline)
-
-# Render base.py.
-
-base = fix_code(base)

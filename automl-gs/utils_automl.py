@@ -4,8 +4,8 @@ import random
 import yaml
 import os
 from pkg_resources import resource_filename
-import tqdm
-from subprocess import Popen, PIPE, CalledProcessError
+from tqdm import tqdm
+from subprocess import Popen, PIPE, DEVNULL, CalledProcessError
 from autopep8 import fix_code
 from collections import OrderedDict
 
@@ -253,7 +253,7 @@ def get_problem_config(target_data,
     direction_text = 'minimizing' if direction == 'min' else 'maximizing'
 
     # Print config to console for user-level debugging.
-    print("Solving a {} problem, {} {} using {}.".format(
+    print("Solving a {} problem, {} {} using {}.\n".format(
         problem_type, direction_text, target_metric, framework))
 
     return problem_type, target_metric, direction
@@ -268,14 +268,13 @@ def build_subprocess_cmd(csv_path, train_folder):
 
     csv_path_join = os.path.join('..', csv_path)
 
-    return ["cd", train_folder, "&&",
-            "python3", "model.py",
+    return ["python3", "model.py",
             "-d", csv_path_join,
             "-m", "train",
             "-c", "automl-gs"]
 
 
-def train_generated_model(cmd, num_epochs):
+def train_generated_model(cmd, num_epochs, train_folder):
     """Trains a generated model script in a Python subprocess,
        and maintains a progress bar of the subprocess training.
 
@@ -284,12 +283,18 @@ def train_generated_model(cmd, num_epochs):
 
     # Arguments:
         cmd: A generate command
+        num_epochs: number of epochs
     """
 
-    with Popen(cmd, stdout=PIPE, bufsize=1, universal_newlines=True) as p:
-        with tqdm(total=num_epochs) as t:
-            for line in p.stdout:
-                if line == "EPOCH_END\n":
-                    t.update(1)
-    if p.returncode != 0:
+    p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
+              universal_newlines=True) 
+    
+    with tqdm(total=num_epochs) as t:
+        for line in iter(p.stdout.readline, ""):
+            if line == "EPOCH_END\n":
+                t.update(1)
+    
+    if p.returncode is not None:
         raise CalledProcessError(p.returncode, p.args)
+    
+    p.stdout.close()
