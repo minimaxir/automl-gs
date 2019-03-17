@@ -42,7 +42,7 @@ hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
 fields = normalize_col_names(input_types)
 
 metrics_csv = open("automl_results.csv", 'w')
-best_result = -1
+best_result = None
 timeformat_utc = "{:%Y%m%d_%H%M%S}".format(datetime.utcnow())
 best_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
 train_folder = "{}_train".format(model_name)
@@ -70,10 +70,13 @@ for params in pbar:
     # and append to the metrics CSV.
     results = pd.read_csv(os.path.join(train_folder, 
                                        "metadata", "results.csv"))
+    results = results.assign(**params)
     results.insert(0, 'trial_id', uuid.uuid4())
 
     results.to_csv("automl_results.csv", mode="a", index=False,
-                   header=(best_result == -1))
+                   header=(best_result is None))
+
+    train_results = results.tail(1).to_dict('records')[0]
 
     # If the target metric improves, save the new hps/files,
     # update the hyperparameters in console,
@@ -84,15 +87,17 @@ for params in pbar:
     else:
         top_result = results[target_metric].min()
 
-    if best_result == -1:   # if first iteration
+    if best_result is None:   # if first iteration
         best_result = top_result
         shutil.copytree(train_folder, best_folder)
+        print_progress_tqdm(params, train_results, pbar, False)
     else:
         is_imp = best_result > top_result
         is_imp = not is_imp if direction == 'min' else is_imp
         if is_imp:
             shutil.rmtree(best_folder)
             shutil.copytree(train_folder, best_folder)
+            print_progress_tqdm(params, train_results, pbar)
 
     # Clean up the generated file folder for the next trial.
     shutil.rmtree(train_folder)

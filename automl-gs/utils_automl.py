@@ -5,6 +5,7 @@ import yaml
 import os
 from pkg_resources import resource_filename
 from tqdm import tqdm
+from tqdm._utils import _term_move_up
 from subprocess import Popen, PIPE, DEVNULL, CalledProcessError
 from autopep8 import fix_code
 from collections import OrderedDict
@@ -137,7 +138,7 @@ def build_hp_grid(framework, types, num_trials,
     return grid_params
 
 
-def print_progress_tqdm(hps, metrics):
+def print_progress_tqdm(hps, metrics, pbar, clear=True):
     """Custom writer for tqdm which prints winning metrics and hyperparameters
     to console after each iteration.
 
@@ -145,19 +146,24 @@ def print_progress_tqdm(hps, metrics):
 
     # Arguments:
         hps: dict of hyperparameters
-        metrics: dict of metrics
+        metrics: dict of hyperparameters+metrics
+        pbar: a tqdm progressbar
+        clear: if writing should clear existing output
     """
 
-    hp_str = '\n'.join(['{}: {}'.format(k, v) for k, v in hp.items()])
-    metrics_str = '\n'.join(['{}: {}'.format(k, v)
-                             for k, v in metrics.items()])
+    hp_str = '\n'.join(['{}: {}'.format(k, v) for k, v in hps.items()])
+    metrics_str = '\n'.join(['{}: {}'.format(k, v) for k, v in metrics.items()
+                             if k not in hps.keys()])
 
-    console_str = ("Metrics:\n" + hp_str + "\n" +
-                   "Hyperparameters:\n" + metrics_str)
+    console_str = ("\nHyperparameters:\n" + hp_str + "\n" +
+                   "\nMetrics:\n" + metrics_str)
 
     # Print to console, removing appropriate number of lines
-    tqdm.write([_term_move_up()] *
-               console_str.count("\n") + '/r' + console_str)
+    if clear:
+        pbar.write("".join([_term_move_up()] *
+                    console_str.count('\n') + [console_str]))
+    else:
+        pbar.write(console_str)
 
 
 def render_model(params, model_name, framework, env, problem_type, 
@@ -289,7 +295,7 @@ def train_generated_model(cmd, num_epochs, train_folder):
     p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
               universal_newlines=True) 
     
-    with tqdm(total=num_epochs) as t:
+    with tqdm(total=num_epochs, leave=False) as t:
         for line in iter(p.stdout.readline, ""):
             if line == "EPOCH_END\n":
                 t.update(1)
