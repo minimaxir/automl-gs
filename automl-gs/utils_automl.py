@@ -185,6 +185,7 @@ def render_model(params, model_name, framework, env, problem_type,
     text_fields = [field for field in fields if field[2] == 'text']
     nontarget_fields = [field for field in fields if field[0] != target_field]
     has_text_input = 'text' in [field[2] for field in fields]
+    text_framework = 'tensorflow' if framework == 'tensorflow' else 'sklearn'
 
     with open(metrics_path) as f:
         metrics = yaml.load(f)[problem_type]
@@ -204,7 +205,8 @@ def render_model(params, model_name, framework, env, problem_type,
             text_fields=text_fields,
             nontarget_fields=nontarget_fields,
             has_text_input=has_text_input,
-            metrics=metrics)
+            metrics=metrics,
+            text_framework=text_framework)
 
         script = fix_code(script)
 

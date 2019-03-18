@@ -22,6 +22,9 @@ from tensorflow.keras import backend as K
 from tensorflow.contrib.opt import AdamWOptimizer
 from tensorflow.train import cosine_decay
 {% endif %}
+{% if framework != 'tensorflow' %}
+from sklearn.feature_extraction.text import CountVectorizer
+{% endif %}
 {% if framework == 'xgboost' %}
 import xgboost as xgb
 {% endif %}

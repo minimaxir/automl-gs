@@ -12,7 +12,7 @@ def build_model(encoders):
     """
 
 {% if has_text_input %}
-{% include 'models/' ~ framework ~ '/text.py' %}
+{% include 'models/' ~ text_framework ~ '/text.py' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
@@ -75,7 +75,7 @@ def build_encoders(df):
     """
 
 {% if has_text_input %}
-{% include 'encoders/' ~ framework ~ '-text.py' %}
+{% include 'encoders/' ~ text_framework ~ '-text.py' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
@@ -97,7 +97,7 @@ def load_encoders():
     encoders = {}
 
 {% if has_text_input %}
-{% include 'loaders/' ~ framework ~ '-text.py' %}
+{% include 'loaders/' ~ text_framework ~ '-text.py' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
@@ -129,7 +129,7 @@ def process_data(df, encoders, process_target=True):
     """
 
 {% if has_text_input %}
-{% include 'processors/' ~ framework ~ '-text.py' %}
+{% include 'processors/' ~ text_framework ~ '-text.py' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
