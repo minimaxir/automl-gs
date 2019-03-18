@@ -36,8 +36,6 @@ base:
       - top10_perc   # encodes top 10% of levels, encodes rest as "other"
       - top50_perc   # encodes top 50% of levels, encodes rest as "other"
 
-# TensorFlow-only hyperparameters
-
 tensorflow:
   weight_decay:   # AdamW Weight Decay
     type: base
@@ -129,10 +127,41 @@ tensorflow:
       - mape
       - poisson
 
-# xgboost-only hyperparameters
-
 xgboost:
   max_depth:   # maximum depth of tree
-    - 3
-    - 5
-    - 7
+    type: base
+    hyperparams:
+      - 3
+      - 5
+      - 7
+      - 9
+  gamma:   # gamma regularization
+    type: base
+    hyperparams:
+      - 1
+      - 5
+      - 10
+  subsample:   # proportion of rows to subsample for trees
+    type: base
+    hyperparams:
+      - 0.5
+      - 0.8
+      - 1.0
+  colsample_bytree: # proportion of columns to subsample for trees
+    type: base
+    hyperparams:
+      - 0.3
+      - 0.8
+      - 1.0
+  max_bin: # max bins for hist binning
+    type: base
+    hyperparams:
+      - 128
+      - 256
+      - 512
+  reg_objective:   # regression objective for the model (can differ from experiment objective)
+    type: regression
+    hyperparams:
+      - rmse
+      - mae
+      - poisson-nloglik

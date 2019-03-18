@@ -22,6 +22,9 @@ from tensorflow.keras import backend as K
 from tensorflow.contrib.opt import AdamWOptimizer
 from tensorflow.train import cosine_decay
 {% endif %}
+{% if framework == 'xgboost' %}
+import xgboost as xgb
+{% endif %}
 
 {% if framework == 'tensorflow' %}
 tf.logging.set_verbosity(tf.logging.ERROR)

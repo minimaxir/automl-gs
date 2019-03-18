@@ -34,12 +34,21 @@ if __name__ == '__main__':
     if args.mode == 'train':
         build_encoders(df)
         encoders = load_encoders()
+        {% if framework == 'tensorflow'}
         model = build_model(encoders)
         model_train(df, model, encoders, args)
+        {% else %}
+        model_train(df, encoders, args)
+        {% endif %}
     elif args.mode == 'predict':
         encoders = load_encoders()
+        {% if framework == 'tensorflow' %}
         model = build_model(encoders)
         model.load_weights('model_weights.hdf5')
+        {% elif framework == 'xgboost' %}
+        model = xgb.Booster()
+        model.load_model('model.bin') 
+        {% endif %}
         predictions = model_predict(df, model, encoders)
         if args.type == 'csv':
             predictions.to_csv('predictions.csv', index=False)

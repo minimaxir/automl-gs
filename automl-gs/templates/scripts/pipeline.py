@@ -1,5 +1,6 @@
 {% include 'imports/pipeline.py' %}
 
+{% if framework == 'tensorflow' %}
 def build_model(encoders):
     """Builds and compiles the model from scratch.
 
@@ -60,7 +61,7 @@ def build_model(encoders):
                                         weight_decay = {{ params['weight_decay'] }}))
 
     return model
-
+{% endif %}
 
 def build_encoders(df):
     """Builds encoders for fields to be used when
@@ -207,11 +208,13 @@ def model_train(df, model, encoders, args):
         y_train = y[train_indices,]
         y_val = y[val_indices,]
 
+    {% if framework == 'tensorflow' %}
     meta = meta_callback(args, X_val, y_val)
 
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
                 epochs=args.epochs,
                 callbacks=[meta])
+    {% endif %}
 
 {% include 'callbacks/' ~ framework ~ '.py' %}
 
