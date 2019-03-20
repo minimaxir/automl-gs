@@ -34,9 +34,9 @@ if __name__ == '__main__':
     if args.mode == 'train':
         build_encoders(df)
         encoders = load_encoders()
-        {% if framework == 'tensorflow'}
+        {% if framework == 'tensorflow' %}
         model = build_model(encoders)
-        model_train(df, model, encoders, args)
+        model_train(df, encoders, args, model)
         {% else %}
         model_train(df, encoders, args)
         {% endif %}

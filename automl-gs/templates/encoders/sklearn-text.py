@@ -8,5 +8,6 @@
 
     with open(os.path.join('encoders', 'model_vocab.json'),
               'w', encoding='utf8') as outfile:
-        json.dump(tokenizer.vocabulary_, outfile, ensure_ascii=False)
+        vocab = {k: int(v) for k, v in tokenizer.vocabulary_.items()}
+        json.dump(vocab, outfile, ensure_ascii=False)
 

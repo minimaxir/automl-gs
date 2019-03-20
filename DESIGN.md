@@ -34,6 +34,10 @@ A few notes on why some of the (potentially counterintuitive) architectural and 
 
 * Keras is used instead of base TensorFlow to simplify further development on the model.
 * The functional Keras API is used instead of the sequential API to support model multi-input into the MLP to merge everything together.
-* tf.keras is used instead of external Keras due to better compatability with TensorFlow-only features (Optimizers, Datasets, TPUs, etc.). This may change after TensorFlow 2.0.
-* The AdamW optimizer + Cosine Annealing w/ Warm Restarts method is used due to the good results from the paper [Fixing Weight Decay Regularization in Adam](https://arxiv.org/abs/1711.05101) granting that configuration robustness in the hyperparameter selection space.
+* tf.keras is used instead of external Keras due to better compatability with TensorFlow-only features (Optimizers, Datasets, TPUs, etc.). 
+* The TensorFlow code delibrately does not do anything fancy in TensorFlow to ensure forward compatability with TF 2.0.
 * The model is built at runtime, and only the weights of the model are saved. This is different that the TensorFlow SavedModel approach, but this approach allows for models to be built with more complex and conditional architectures (e.g. for text, use a normal LSTM on CPU-only platforms but a CuDNNLSTM when a GPU is present).
+
+## xgboost
+
+* Most tutorials use the sklearn interface to xgboost; however that interface does not have feature parity with the native interface, and is missing important features needed. (e.g. histogram binning, running single boosts, etc.)

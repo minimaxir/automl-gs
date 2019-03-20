@@ -186,15 +186,21 @@ def model_predict(df, model, encoders):
     
     {% endif %}
 
-def model_train(df, model, encoders, args):
+def model_train(df, encoders, args, model=None):
     """Trains a model, and saves the data locally.
 
     # Arguments
         df: A pandas DataFrame containing the source data.
         model: A compiled model.
     """
-    
+    {% if framework == 'tensorflow' %}
     X, y = process_data(df, encoders)
+    {% endif %}
+
+    {% if framework == 'xgboost' %}
+    X = np.hstack(process_data(df, encoders, False))
+    y = df['{{ target_field }}'].values
+    {% endif %}
 
     {% if problem_type == 'regression' %}
     split = ShuffleSplit(n_splits=1, train_size=args.split, test_size=None, random_state=123)
@@ -202,13 +208,13 @@ def model_train(df, model, encoders, args):
     split = StratifiedShuffleSplit(n_splits=1, train_size=args.split, test_size=None, random_state=123)
     {% endif %}
 
+    {% if framework == 'tensorflow' %}
     for train_indices, val_indices in split.split(np.zeros(y.shape[0]), y):
         X_train = [field[train_indices,] for field in X]
         X_val = [field[val_indices,] for field in X]
         y_train = y[train_indices,]
         y_val = y[val_indices,]
 
-    {% if framework == 'tensorflow' %}
     meta = meta_callback(args, X_val, y_val)
 
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
@@ -216,5 +222,43 @@ def model_train(df, model, encoders, args):
                 callbacks=[meta])
     {% endif %}
 
-{% include 'callbacks/' ~ framework ~ '.py' %}
+    {% if framework == 'xgboost' %}
+    for train_indices, val_indices in split.split(np.zeros(y.shape[0]), y):
+        train = xgb.DMatrix(X[train_indices,], y[train_indices,])
+        val = xgb.DMatrix(X[val_indices,], y[val_indices,])
+
+    params = {
+        'max_depth': {{ params['max_depth'] }},
+        'gamma': {{ params['gamma'] }},
+        'subsample': {{ params['subsample'] }},
+        'colsample_bytree': {{ params['colsample_bytree'] }},
+        'max_bin': {{ params['max_bin'] }},
+        'objective': {% include 'models/' ~ framework ~ '/loss.py' %}
+        'tree_method': 'hist',
+        'silent': 1
+    }
+
+    f = open(os.path.join('metadata', 'results.csv'), 'w')
+    w = csv.writer(f)
+    w.writerow(['epoch', 'time_completed'] + {{ metrics }})
+
+    for epoch in range(args.epochs):
+        model = xgb.train(params, train, 1,
+                          xgb_model=model if epoch > 0 else None)
+        y_pred = model.predict(val)
+
+        time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.utcnow())
+        # w.writerow([epoch+1, time_completed] + metrics)
+
+        if args.context == 'automl-gs':
+            sys.stdout.flush()
+            print("\nEPOCH_END")
+
+    f.close()
+    model.save_model('model.bin')
+    {% endif %}
+
+{% if framework == 'tensorflow' %}
+{% include 'callbacks/tensorflow.py' %}
+{% endif %}
 
