@@ -164,4 +164,4 @@ xgboost:
     hyperparams:
       - rmse
       - mae
-      - poisson-nloglik
+      - count:poisson

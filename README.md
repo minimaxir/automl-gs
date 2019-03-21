@@ -2,15 +2,15 @@
 
 Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native code pipelines allowing you to integrate that model into any prediction workflow.
 
-automl-gs is an AutoML tool which, unlike Microsoft's [NNI](https://github.com/Microsoft/nni), Uber's [Ludwig](https://github.com/uber/ludwig), and [TPOT](https://github.com/EpistasisLab/tpot), offers a *zero code/model definition interface* to getting an optimized model in multiple popular ML/DL frameworks, with minimal Python dependencies. automl-gs is designed for citizen data scientists and engineers without a deep statistical background under the philosophy that you don't need to know any modern data preprocessing and machine learning engineering techniques to create a powerful prediction pipeline.
+automl-gs is an AutoML tool which, unlike Microsoft's [NNI](https://github.com/Microsoft/nni), Uber's [Ludwig](https://github.com/uber/ludwig), and [TPOT](https://github.com/EpistasisLab/tpot), offers a *zero code/model definition interface* to getting an optimized model and data transformation pipeline in multiple popular ML/DL frameworks, with minimal Python dependencies (pandas + scikit-learn + your framework of choice). automl-gs is designed for citizen data scientists and engineers without a deep statistical background under the philosophy that you don't need to know any modern data preprocessing and machine learning engineering techniques to create a powerful prediction workflow.
 
 Nowadays, the cost of computing many different models and hyperparameters is much lower than the oppertunity cost of an data scientist's time. automl-gs is a Python 3 module designed to abstract away the common approaches to transforming tabular data, architecting machine learning/deep learning models, and performing random hyperparameter searches to identify the best-performing model. This allows data scientists and researchers to better utilize their time on model performance optimization.
 
 * Generates native Python code; no platform lock-in, and no need to use automl-gs after the model script is created.
 * Train model configurations super-fast *for free* using a **TPU** in Google Colaboratory.
-* Handles messy datasets that normally require manual intervention, such as datetime/categorical encoding and spaced/parathesized field names.
+* Handles messy datasets that normally require manual intervention, such as datetime/categorical encoding and spaced/parathesized column names.
 * Each part of the generated model pipeline is its own function w/ docstrings, making it much easier to integrate into production workflows.
-* Extremely detailed metrics reporting for every trial stored in a CSV, allowing you to identify and visualize model strengths and weaknesses.
+* Extremely detailed metrics reporting for every trial stored in a tidy CSV, allowing you to identify and visualize model strengths and weaknesses.
 * Correct serialization of data pipeline encoders on disk (i.e. no pickled Python objects!)
 * Retrain the generated model on new data without making any code/pipeline changes.
 * Quit the hyperparameter search at any time, as the results are saved after each trial.

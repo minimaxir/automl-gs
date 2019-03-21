@@ -234,7 +234,7 @@ def model_train(df, encoders, args, model=None):
         'colsample_bytree': {{ params['colsample_bytree'] }},
         'max_bin': {{ params['max_bin'] }},
         'objective': {% include 'models/' ~ framework ~ '/loss.py' %}
-        'tree_method': 'hist',
+        'tree_method': {% if gpu %}'gpu_hist'{% else %}'hist'{% endif %},
         'silent': 1
     }
 

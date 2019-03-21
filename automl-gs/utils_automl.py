@@ -167,7 +167,8 @@ def print_progress_tqdm(hps, metrics, pbar, clear=True):
 
 
 def render_model(params, model_name, framework, env, problem_type, 
-                 target_metric, target_field, train_folder, fields, split, num_epochs,
+                 target_metric, target_field, train_folder, fields,
+                 split, num_epochs, gpu,
                  metrics_path=resource_filename(__name__, "metrics.yml")):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
@@ -206,7 +207,8 @@ def render_model(params, model_name, framework, env, problem_type,
             nontarget_fields=nontarget_fields,
             has_text_input=has_text_input,
             metrics=metrics,
-            text_framework=text_framework)
+            text_framework=text_framework,
+            gpu=gpu)
 
         script = fix_code(script)
 
@@ -297,7 +299,8 @@ def train_generated_model(cmd, num_epochs, train_folder):
     p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
               universal_newlines=True) 
     
-    with tqdm(total=num_epochs, leave=False) as t:
+    with tqdm(total=num_epochs, leave=False,
+              smoothing=0, unit='epoch') as t:
         for line in iter(p.stdout.readline, ""):
             if line == "EPOCH_END\n":
                 t.update(1)

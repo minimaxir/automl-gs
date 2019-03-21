@@ -18,6 +18,7 @@ def automl_grid_search(csv_path, target_field,
                        split=0.7,
                        num_epochs=20,
                        col_types={},
+                       gpu=False,
                        **kwargs):
     """Parent function which performs the hyperparameter search.
     """
@@ -48,7 +49,7 @@ best_folder = "{}_{}_{}".format(model_name, framework, timeformat_utc)
 train_folder = "{}_train".format(model_name)
 cmd = build_subprocess_cmd(csv_path, train_folder)
 
-pbar = tqdm(hp_grid)
+pbar = tqdm(hp_grid, smoothing=0, unit='trial')
 for params in pbar:
 
     # Create destination folders for the model scripts + metadata
@@ -61,7 +62,7 @@ for params in pbar:
     render_model(params, model_name,
                  framework, env, problem_type,
                  target_metric, target_field,
-                 train_folder, fields, split, num_epochs)
+                 train_folder, fields, split, num_epochs, gpu)
 
     # Execute model training using the generated files.
     train_generated_model(cmd, num_epochs, train_folder)
