@@ -78,8 +78,6 @@ To retrain the model on new data:
 python3 model.py -d data.csv -m train
 ```
 
-
-
 ## CLI Arguments/Function Parameters
 
 * `csv_path`: Path to the CSV file (must be in the current directory) [Required]
@@ -97,7 +95,7 @@ python3 model.py -d data.csv -m train
 
 TL;DR: auto-ml gs generates raw Python code using Jinja templates and trains a model using the generated code in a subprocess: repeat using different hyperparameters until done and save the best model.
 
-automl-gs loads a given CSV and infers the data type of each column to be fed into the model. Then it tries a ETL strategy for each column field as determined by the hyperparameters; for example, a Datetime field has its `hour` and `dayofweek` binary-encoded by default, but hyperparameters may dictate the encoding of `month` and `year` as additional model fields. ETL strategies are optimized for frameworks; TensorFlow for example will use text embeddings, while other frameworks will use CountVectorizers to encode text. automl-gs then creates a statistical model with the specified framework. Both the model ETL functions and model construction functions are saved as a generated Python script.
+automl-gs loads a given CSV and infers the data type of each column to be fed into the model. Then it tries a ETL strategy for each column field as determined by the hyperparameters; for example, a Datetime field has its `hour` and `dayofweek` binary-encoded by default, but hyperparameters may dictate the encoding of `month` and `year` as additional model fields. ETL strategies are optimized for frameworks; TensorFlow for example will use text embeddings, while other frameworks will use CountVectorizers to encode text (when training, TensorFlow will also used a shared text encoder via Keras's functional API). automl-gs then creates a statistical model with the specified framework. Both the model ETL functions and model construction functions are saved as a generated Python script.
 
 automl-gs then runs the generated training script as if it was a typical user. Once the model is trained, automl-gs saves the training results in its own CSV, along with all the hyperparameters used to train the model. automl-gs then repeats the task with another set of hyperparameters, until the specified number of trials is hit or the user kills the script.
 
@@ -106,7 +104,7 @@ The best model Python script is kept after each trial, which can then easily be 
 ## Helpful Notes
 
 * *It is the user's responsibility to ensure the input dataset is high-quality.* No model hyperparameter search will provide good research on flawed/unbalanced datasets. Relatedly, hyperparameter optimization may provide optimistic predictions on the validation set, which may not necessairly match the model performance in the real world.
-* *A neural network approach alone may not necessairly be the best approach*. Try using `xgboost` or even a relatively boring `sklearn` LinearRegression and see what you get! The results may surprise you!
+* *A neural network approach alone may not necessairly be the best approach*. Try using `xgboost`. The results may surprise you!
 * *automl-gs is only attempting to solve tabular data problems.* If you have a more complicated problem to solve (e.g. predicting a sequence of outputs), I recommend using Microsoft's [NNI](https://github.com/Microsoft/nni) and Uber's [Ludwig](https://github.com/uber/ludwig) as noted in the introduction.
 
 ## Future Work

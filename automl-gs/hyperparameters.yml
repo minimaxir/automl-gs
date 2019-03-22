@@ -141,6 +141,12 @@ xgboost:
       - 1
       - 5
       - 10
+  min_child_weight:   # minimum child weight for split
+    type: base
+    hyperparams:
+      - 1
+      - 3
+      - 5
   subsample:   # proportion of rows to subsample for trees
     type: base
     hyperparams:
@@ -162,6 +168,5 @@ xgboost:
   reg_objective:   # regression objective for the model (can differ from experiment objective)
     type: regression
     hyperparams:
-      - rmse
-      - mae
+      - reg:linear
       - count:poisson

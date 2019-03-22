@@ -172,7 +172,11 @@ def model_predict(df, model, encoders):
     """
 
     data_enc = process_data(df, encoders, process_target=False)
-    {% if framework == 'tensorflow' %}
+
+    {% if framework == 'xgboost' %}
+    data_enc = xgb.DMatrix(np.hstack(data_enc))
+    {% endif %}
+
     {% if problem_type == 'classification' %}
     headers = encoders['{{ target_field }}_encoder'].classes_
     {% elif problem_type == 'binary_classification' %}
@@ -184,7 +188,6 @@ def model_predict(df, model, encoders):
 
     return predictions
     
-    {% endif %}
 
 def model_train(df, encoders, args, model=None):
     """Trains a model, and saves the data locally.
@@ -236,8 +239,10 @@ def model_train(df, encoders, args, model=None):
         val = xgb.DMatrix(X[val_indices,], y[val_indices,])
 
     params = {
+        'eta': {{ params['base_lr'] }},
         'max_depth': {{ params['max_depth'] }},
         'gamma': {{ params['gamma'] }},
+        'min_child_weight': {{ params['min_child_weight'] }},
         'subsample': {{ params['subsample'] }},
         'colsample_bytree': {{ params['colsample_bytree'] }},
         'max_bin': {{ params['max_bin'] }},
