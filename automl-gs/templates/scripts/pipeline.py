@@ -194,7 +194,9 @@ def model_train(df, encoders, args, model=None):
 
     # Arguments
         df: A pandas DataFrame containing the source data.
-        model: A compiled model.
+        encoders: a dict of encoders to process the data.
+        args: a dict of arguments passed through the command line
+        model: A compiled model (for TensorFlow, None otherwise).
     """
     {% if framework == 'tensorflow' %}
     X, y = process_data(df, encoders)

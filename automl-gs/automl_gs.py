@@ -21,11 +21,12 @@ def automl_grid_search(csv_path, target_field,
                        gpu=False,
                        tpu_address=None):
     """Parent function which performs the hyperparameter search.
+
+    See the package README for parameter descriptions:
+    https://github.com/minimaxir/automl-gs
     """
 
 # Prepare environment and source data
-
-
 env = Environment(
     loader=PackageLoader('automl_gs', 'templates'),
     trim_blocks=True,

@@ -20,6 +20,7 @@ def get_input_types(df, col_types, target_field):
     # Arguments:
         df: A pandas DataFrame.
         col_types: A dict of explicitly defined {field_name: type} mappings.
+        target_field: string indicating the target field
 
     # Returns:
         A dict of {field_name: type} mappings.
@@ -113,6 +114,7 @@ def build_hp_grid(framework, types, num_trials,
         framework: string indicating the framework (e.g. `tensorflow`)
         types: list of hyperparameter types to consider; exclude rest
         num_trials: number of distinct trials to keep
+        problem_type: type of problem to solve
         hp_path: filepath of hyperparameters
 
     # Returns
@@ -226,6 +228,8 @@ def get_problem_config(target_data,
 
     # Arguments:
         target_data: Data column to infer problem spec on.
+        framework: problem framework
+        metrics_path: location of the metrics file
 
     # Returns:
         problem_type: One of 'regression', 'binary_classification' or
@@ -295,6 +299,7 @@ def train_generated_model(cmd, num_epochs, train_folder):
     # Arguments:
         cmd: A generate command
         num_epochs: number of epochs
+        train_folder: subfolder where the training occurs.
     """
 
     p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
