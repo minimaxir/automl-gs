@@ -217,6 +217,13 @@ def model_train(df, encoders, args, model=None):
 
     meta = meta_callback(args, X_val, y_val)
 
+    {% if tpu_address is not None %}
+    if args.context == 'automl-gs':
+        model= tf.contrib.tpu.keras_to_tpu_model(model,
+               strategy=tf.contrib.tpu.TPUDistributionStrategy(
+               tf.contrib.cluster_resolver.TPUClusterResolver({{ tpu_address }})))
+    {% endif %}
+
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
                 epochs=args.epochs,
                 callbacks=[meta])

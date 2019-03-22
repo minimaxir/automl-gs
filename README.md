@@ -68,8 +68,8 @@ CLI arguments/function parameters:
 
 * `csv_path`: Path to the CSV file (must be in the current directory) [Required]
 * `target`: Target field to predict [Required]
-* `model_name`: Name of the model (if you want to train models with different names) [Default: 'automl']
 * `framework`: Machine learning framework to use [Default: 'tensorflow']
+* `model_name`: Name of the model (if you want to train models with different names) [Default: 'automl']
 * `num_trials`: Number of trials / different hyperameter combos to test. [Default: 100]
 * `split`: Train-val split when training the models [Default: 0.7]
 * `num_epochs`: Number of epochs / passes through the data when training the models.

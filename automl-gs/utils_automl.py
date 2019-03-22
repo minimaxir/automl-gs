@@ -168,7 +168,7 @@ def print_progress_tqdm(hps, metrics, pbar, clear=True):
 
 def render_model(params, model_name, framework, env, problem_type, 
                  target_metric, target_field, train_folder, fields,
-                 split, num_epochs, gpu,
+                 split, num_epochs, gpu, tpu_address,
                  metrics_path=resource_filename(__name__, "metrics.yml")):
     """Renders and saves the files (model.py, pipeline.py, requirements.txt) for the given hyperparameters.
     """
@@ -208,7 +208,8 @@ def render_model(params, model_name, framework, env, problem_type,
             has_text_input=has_text_input,
             metrics=metrics,
             text_framework=text_framework,
-            gpu=gpu)
+            gpu=gpu,
+            tpu_address=tpu_address)
 
         script = fix_code(script)
 

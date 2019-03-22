@@ -11,15 +11,15 @@ from utils_automl import *
 
 
 def automl_grid_search(csv_path, target_field,
-                       model_name='automl',
                        framework='tensorflow',
+                       model_name='automl',
                        context='standalone',
-                       num_trials=1000,
+                       num_trials=100,
                        split=0.7,
                        num_epochs=20,
                        col_types={},
                        gpu=False,
-                       **kwargs):
+                       tpu_address=None):
     """Parent function which performs the hyperparameter search.
     """
 
@@ -62,7 +62,7 @@ for params in pbar:
     render_model(params, model_name,
                  framework, env, problem_type,
                  target_metric, target_field,
-                 train_folder, fields, split, num_epochs, gpu)
+                 train_folder, fields, split, num_epochs, gpu, tpu_address)
 
     # Execute model training using the generated files.
     train_generated_model(cmd, num_epochs, train_folder)
