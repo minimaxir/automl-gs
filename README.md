@@ -1,6 +1,6 @@
 # automl-gs
 
-Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native code pipelines allowing you to integrate that model into any prediction workflow.
+Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native code pipelines allowing you to integrate that model into any prediction workflow. No black box: you can see *exactly* how the data is processed, how the model is constructed, and you can make tweaks as necessary.
 
 automl-gs is an AutoML tool which, unlike Microsoft's [NNI](https://github.com/Microsoft/nni), Uber's [Ludwig](https://github.com/uber/ludwig), and [TPOT](https://github.com/EpistasisLab/tpot), offers a *zero code/model definition interface* to getting an optimized model and data transformation pipeline in multiple popular ML/DL frameworks, with minimal Python dependencies (pandas + scikit-learn + your framework of choice). automl-gs is designed for citizen data scientists and engineers without a deep statistical background under the philosophy that you don't need to know any modern data preprocessing and machine learning engineering techniques to create a powerful prediction workflow.
 
@@ -24,12 +24,60 @@ Currently automl-gs supports the generation of models for regression and classif
 * TensorFlow (via `tf.keras`) | `tensorflow`
 * XGBoost (w/ hist method) | `xgboost`
 
-Coming soon:
+To be implemented:
 
 * Catboost | `catboost`
 * LightGBM | `lightgbm`
 
-## How it Works
+## How to Use
+
+automl-gs can be installed via pip:
+
+```shell
+pip3 install automl_gs
+```
+
+You will also need to install the corresponding ML/DL framework (e.g. `tensorflow`/`tensorflow-gpu` for TensorFlow, `xgboost` for xgboost, etc.)
+
+After that, you can run it directly from the command line:
+
+```shell
+automl_gs data.csv target
+```
+
+You may also invoke it directly from Python. (e.g. via a Jupyter Notebook)
+
+```python
+from automl_gs import automl_grid_search
+
+automl_grid_search('data.csv', 'target')
+```
+
+The output of the automl-training is:
+
+* A timestamped folder (e.g. `automl_tensorflow_20190317_020434`) with contains:
+  * `model.py`: The generated model file.
+  * `pipeline.py`: The generated pipeline file.
+  * `requirements.txt`: The generated requirements file.
+  * `/encoders`: A folder containing JSON-seralized encoder files
+  * `/metadata`: A folder containing training statistics + other cool stuff not yet implemented!
+  * The model itself (format depends on framework)
+* `automl_results.csv`: A CSV containing the training results after each epoch and the hyperparameters used to train at that time.
+
+CLI arguments/function parameters:
+
+* `csv_path`: Path to the CSV file (must be in the current directory) [Required]
+* `target`: Target field to predict [Required]
+* `model_name`: Name of the model (if you want to train models with different names) [Default: 'automl']
+* `framework`: Machine learning framework to use [Default: 'tensorflow']
+* `num_trials`: Number of trials / different hyperameter combos to test. [Default: 100]
+* `split`: Train-val split when training the models [Default: 0.7]
+* `num_epochs`: Number of epochs / passes through the data when training the models.
+* `col_types`: Dictionary of fields:data types to use to override automl-gs's guesses. (only when using in Python) [Default: {}]
+* `gpu`: For non-Tensorflow frameworks, boolean to determine whether to use GPU-optimized training methods (TensorFlow can detect it automatically) [Default: False]
+* `tpu_address`: For TensorFlow, hardware address of the TPU on the system. [Default: None]
+
+## How automl-gs Works
 
 TL;DR: auto-ml gs generates raw Python code using Jinja templates and trains a model using the generated code in a subprocess: repeat using different hyperparameters until done and save the best model.
 
