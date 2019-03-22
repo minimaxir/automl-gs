@@ -1,3 +1,5 @@
+        y_pred_label = np.round(y_pred)
+        
         logloss = log_loss(y_true, y_pred)
         acc = accuracy_score(y_true, y_pred_label)
         precision = precision_score(y_true, y_pred_label, average='micro')

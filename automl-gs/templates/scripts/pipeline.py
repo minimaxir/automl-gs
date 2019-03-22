@@ -198,7 +198,8 @@ def model_train(df, encoders, args, model=None):
     {% endif %}
 
     {% if framework == 'xgboost' %}
-    X = np.hstack(process_data(df, encoders, False))
+    X, y_enc = process_data(df, encoders)
+    X = np.hstack(X)
     y = df['{{ target_field }}'].values
     {% endif %}
 
@@ -217,7 +218,7 @@ def model_train(df, encoders, args, model=None):
 
     meta = meta_callback(args, X_val, y_val)
 
-    {% if tpu_address is not None %}
+    {% if tpu_address %}
     if args.context == 'automl-gs':
         model= tf.contrib.tpu.keras_to_tpu_model(model,
                strategy=tf.contrib.tpu.TPUDistributionStrategy(
@@ -249,13 +250,16 @@ def model_train(df, encoders, args, model=None):
     w = csv.writer(f)
     w.writerow(['epoch', 'time_completed'] + {{ metrics }})
 
+    y_true = y_enc[val_indices, ]
     for epoch in range(args.epochs):
         model = xgb.train(params, train, 1,
                           xgb_model=model if epoch > 0 else None)
         y_pred = model.predict(val)
 
+        {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
+
         time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.utcnow())
-        # w.writerow([epoch+1, time_completed] + metrics)
+        w.writerow([epoch+1, time_completed] + metrics)
 
         if args.context == 'automl-gs':
             sys.stdout.flush()

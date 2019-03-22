@@ -3,6 +3,6 @@
 {% elif problem_type == 'binary_classification' %}
 'binary:logistic',
 {% else %}
-'multi:softmax',
+'multi:softprob',
 'num_class': df['{{ target_field }}'].nunique(),
 {% endif %}
