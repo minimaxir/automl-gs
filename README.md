@@ -53,7 +53,7 @@ from automl_gs import automl_grid_search
 automl_grid_search('data.csv', 'target')
 ```
 
-The output of the automl-training is:
+The output of the automl-gs training is:
 
 * A timestamped folder (e.g. `automl_tensorflow_20190317_020434`) with contains:
   * `model.py`: The generated model file.
@@ -64,7 +64,23 @@ The output of the automl-training is:
   * The model itself (format depends on framework)
 * `automl_results.csv`: A CSV containing the training results after each epoch and the hyperparameters used to train at that time.
 
-CLI arguments/function parameters:
+Once the training is done, you can run the generated files from the command line within the generated folder above.
+
+To predict:
+
+```shell
+python3 model.py -d data.csv -m predict
+```
+
+To retrain the model on new data:
+
+```shell
+python3 model.py -d data.csv -m train
+```
+
+
+
+## CLI Arguments/Function Parameters
 
 * `csv_path`: Path to the CSV file (must be in the current directory) [Required]
 * `target`: Target field to predict [Required]
@@ -74,7 +90,7 @@ CLI arguments/function parameters:
 * `split`: Train-val split when training the models [Default: 0.7]
 * `num_epochs`: Number of epochs / passes through the data when training the models.
 * `col_types`: Dictionary of fields:data types to use to override automl-gs's guesses. (only when using in Python) [Default: {}]
-* `gpu`: For non-Tensorflow frameworks, boolean to determine whether to use GPU-optimized training methods (TensorFlow can detect it automatically) [Default: False]
+* `gpu`: For non-Tensorflow frameworks and Pascal-or-later GPUs, boolean to determine whether to use GPU-optimized training methods (TensorFlow can detect it automatically) [Default: False]
 * `tpu_address`: For TensorFlow, hardware address of the TPU on the system. [Default: None]
 
 ## How automl-gs Works
