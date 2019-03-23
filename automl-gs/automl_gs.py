@@ -85,19 +85,17 @@ for params in pbar:
     # update the hyperparameters in console,
     # and delete the previous best files.
 
-    if direction == 'max':
-        top_result = results[target_metric].max()
-    else:
-        top_result = results[target_metric].min()
+    top_result = train_results[target_metric]
 
     if best_result is None:   # if first iteration
         best_result = top_result
         shutil.copytree(train_folder, best_folder)
         print_progress_tqdm(params, train_results, pbar, False)
     else:
-        is_imp = best_result > top_result
+        is_imp = top_result > best_result
         is_imp = not is_imp if direction == 'min' else is_imp
         if is_imp:
+            best_result = top_result
             shutil.rmtree(best_folder)
             shutil.copytree(train_folder, best_folder)
             print_progress_tqdm(params, train_results, pbar)
