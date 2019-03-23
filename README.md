@@ -2,6 +2,8 @@
 
 Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native code pipelines allowing you to integrate that model into any prediction workflow. No black box: you can see *exactly* how the data is processed, how the model is constructed, and you can make tweaks as necessary.
 
+![demo output](docs/demo-output.png)
+
 automl-gs is an AutoML tool which, unlike Microsoft's [NNI](https://github.com/Microsoft/nni), Uber's [Ludwig](https://github.com/uber/ludwig), and [TPOT](https://github.com/EpistasisLab/tpot), offers a *zero code/model definition interface* to getting an optimized model and data transformation pipeline in multiple popular ML/DL frameworks, with minimal Python dependencies (pandas + scikit-learn + your framework of choice). automl-gs is designed for citizen data scientists and engineers without a deep statistical background under the philosophy that you don't need to know any modern data preprocessing and machine learning engineering techniques to create a powerful prediction workflow.
 
 Nowadays, the cost of computing many different models and hyperparameters is much lower than the oppertunity cost of an data scientist's time. automl-gs is a Python 3 module designed to abstract away the common approaches to transforming tabular data, architecting machine learning/deep learning models, and performing random hyperparameter searches to identify the best-performing model. This allows data scientists and researchers to better utilize their time on model performance optimization.
