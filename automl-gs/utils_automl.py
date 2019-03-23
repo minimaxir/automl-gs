@@ -186,7 +186,8 @@ def render_model(params, model_name, framework, env, problem_type,
 
     load_fields = {field[1]: type_map[field[2]] for field in fields}
     text_fields = [field for field in fields if field[2] == 'text']
-    nontarget_fields = [field for field in fields if field[0] != target_field]
+    nontarget_fields = [field for field in fields if field[1] != target_field]
+    target_field, target_field_raw = [(field[0], field[1]) for field in fields if field[1] == target_field][0]
     has_text_input = 'text' in [field[2] for field in fields]
     text_framework = 'tensorflow' if framework == 'tensorflow' else 'sklearn'
 
@@ -207,6 +208,7 @@ def render_model(params, model_name, framework, env, problem_type,
             load_fields=load_fields,
             text_fields=text_fields,
             nontarget_fields=nontarget_fields,
+            target_field_raw=target_field_raw,
             has_text_input=has_text_input,
             metrics=metrics,
             text_framework=text_framework,
