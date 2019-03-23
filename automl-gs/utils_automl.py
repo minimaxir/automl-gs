@@ -42,7 +42,7 @@ def get_input_types(df, col_types, target_field):
             avg_spaces = df[field].str.count(' ').mean()
 
         # Automatically ignore `id`-related fields
-        if field in ['id', 'uuid', 'guid', 'pk']:
+        if field.lower() in ['id', 'uuid', 'guid', 'pk', 'name']:
             field_types[field] = 'ignore'
 
         # Foreign key fields are always categorical

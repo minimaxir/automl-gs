@@ -205,7 +205,7 @@ def model_train(df, encoders, args, model=None):
     {% if framework == 'xgboost' %}
     X, y_enc = process_data(df, encoders)
     X = np.hstack(X)
-    y = df['{{ target_field }}'].values
+    y = df['{{ target_field_raw }}'].values
     {% endif %}
 
     {% if problem_type == 'regression' %}

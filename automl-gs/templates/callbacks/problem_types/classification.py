@@ -1,7 +1,9 @@
         y_pred_label = np.zeros(y_pred.shape)
         y_pred_label[np.arange(y_pred.shape[0]), y_pred.argmax(axis=1)] = 1
         
-        logloss = log_loss(y_true, y_pred)
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            logloss = log_loss(y_true, y_pred)
         acc = accuracy_score(y_true, y_pred_label)
         precision = precision_score(y_true, y_pred_label, average='micro')
         recall = recall_score(y_true, y_pred_label, average='micro')

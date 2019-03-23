@@ -87,18 +87,19 @@ for params in pbar:
 
     top_result = train_results[target_metric]
 
-    if best_result is None:   # if first iteration
-        best_result = top_result
-        shutil.copytree(train_folder, best_folder)
-        print_progress_tqdm(params, train_results, pbar, False)
-    else:
-        is_imp = top_result > best_result
-        is_imp = not is_imp if direction == 'min' else is_imp
-        if is_imp:
+    if top_result is not None:
+        if best_result is None:   # if first iteration
             best_result = top_result
-            shutil.rmtree(best_folder)
             shutil.copytree(train_folder, best_folder)
-            print_progress_tqdm(params, train_results, pbar)
+            print_progress_tqdm(params, train_results, pbar, False)
+        else:
+            is_imp = top_result > best_result
+            is_imp = not is_imp if direction == 'min' else is_imp
+            if is_imp:
+                best_result = top_result
+                shutil.rmtree(best_folder)
+                shutil.copytree(train_folder, best_folder)
+                print_progress_tqdm(params, train_results, pbar)
 
     # Clean up the generated file folder for the next trial.
     shutil.rmtree(train_folder)
