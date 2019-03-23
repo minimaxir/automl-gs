@@ -15,7 +15,7 @@
     {{ field }}_bins = {{ field }}_enc.quantile(np.linspace(0, 1, 10+1))
     {% endif %}
     {% if params['numeric_strat'] in ['minmax', 'standard'] %}
-    {{ field }}_encoder.fit(df['{{ field }}'].values.reshape(-1, 1))
+    {{ field }}_encoder.fit(df['{{ field_raw }}'].values.reshape(-1, 1))
 
     {{ field }}_encoder_dict = {attr: getattr({{ field }}_encoder, attr).tolist()
                                 for attr in {{ field }}_encoder_attrs}
