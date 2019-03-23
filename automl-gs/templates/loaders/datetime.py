@@ -18,7 +18,7 @@
     {{ field }}_year_encoder = LabelBinarizer()
     with open(os.path.join('encoders', '{{ field }}_year_encoder.json'),
             'r', encoding='utf8', errors='ignore') as infile:
-        {{ field }}_year_encoder._classes = json.load(infile)
+        {{ field }}_year_encoder.classes_ = json.load(infile)
     encoders['{{ field }}_year_encoder'] = {{ field }}_year_encoder
     {% endif %}
 

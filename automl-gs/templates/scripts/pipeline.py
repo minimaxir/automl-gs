@@ -30,9 +30,12 @@ def build_model(encoders):
         input_{{ field }}{{ ", " if not loop.last }}
         {% else %}
         input_dayofweeks_{{ field }},
-        input_hours_{{ field }}{{ ", " if not loop.last and not params['datetime_month']}}
+        input_hours_{{ field }}{{ ", " if not loop.last and not (params['datetime_month'] or params['datetime_year']) }}
         {% if params['datetime_month'] %}
-        ,input_month_{{ field }}{{ ", " if not loop.last }}
+        ,input_month_{{ field }}{{ ", " if not loop.last and not params['datetime_year'] }}
+        {% endif %}
+        {% if params['datetime_year'] %}
+        ,input_year_{{ field }}{{ ", " if not loop.last }}
         {% endif %}
         {% endif %}
         {% endfor %}
@@ -47,9 +50,12 @@ def build_model(encoders):
         input_{{ field }}{{ ", " if not loop.last }}
         {% elif field != target_field  %}
         input_dayofweeks_{{ field }},
-        input_hours_{{ field }}{{ ", " if not loop.last and not params['datetime_month']}}
+        input_hours_{{ field }}{{ ", " if not loop.last and not (params['datetime_month'] or params['datetime_year'])}}
         {% if params['datetime_month'] %}
-        ,input_month_{{ field }}{{ ", " if not loop.last }}
+        ,input_month_{{ field }}{{ ", " if not loop.last and not params['datetime_year']}}
+        {% endif %}
+        {% if params['datetime_year'] %}
+        ,input_year_{{ field }}{{ ", " if not loop.last }}
         {% endif %}
         {% endif %}
         {% endfor %}
@@ -144,9 +150,12 @@ def process_data(df, encoders, process_target=True):
         {{ field }}_enc{{ ", " if not loop.last }}
         {% else %}
         {{ field }}_dayofweeks_enc,
-        {{ field }}_hour_enc{{ ", " if not loop.last and not params['datetime_month']}}
+        {{ field }}_hour_enc{{ ", " if not loop.last and not (params['datetime_month'] or params['datetime_year'])}}
         {% if params['datetime_month'] %}
-        ,{{ field }}_month_enc{{ ", " if not loop.last }}
+        ,{{ field }}_month_enc{{ ", " if not loop.last and not params['datetime_year']}}
+        {% endif %}
+        {% if params['datetime_year'] %}
+        ,{{ field }}_year_enc{{ ", " if not loop.last }}
         {% endif %}
         {% endif %}
         {% endfor %}
