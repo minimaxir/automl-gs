@@ -221,14 +221,15 @@ def render_model(params, model_name, framework, env, problem_type,
 
 def get_problem_config(target_data,
                        framework,
-                       metrics_path=resource_filename(__name__, "metrics.yml"),
-                       **kwargs):
+                       target_metric,
+                       metrics_path=resource_filename(__name__, "metrics.yml")):
     """Gets the problem type, target metric, and metric direction, or infers
     them from the data if not expicitly specified.
 
     # Arguments:
         target_data: Data column to infer problem spec on.
         framework: problem framework
+        target_metric: Target metric to optimize (overrides automatic selection)
         metrics_path: location of the metrics file
 
     # Returns:
@@ -243,9 +244,7 @@ def get_problem_config(target_data,
     field_type = target_data.dtype
 
     # Problem Type
-    if 'problem_type' in kwargs:
-        problem_type = kwargs['problem_type']
-    elif num_unique_values == 2:
+    if num_unique_values == 2:
         problem_type = 'binary_classification'
     elif field_type == 'float64':
         problem_type = 'regression'
@@ -253,8 +252,8 @@ def get_problem_config(target_data,
         problem_type = 'classification'
 
     # Target Metric
-    if 'target_metric' in kwargs:
-        target_metric = kwargs['target_metric']
+    if target_metric is not None:
+        pass
     elif problem_type == 'regression':
         target_metric = 'mse'
     else:

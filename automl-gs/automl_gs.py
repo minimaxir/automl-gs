@@ -11,6 +11,7 @@ from utils_automl import *
 
 
 def automl_grid_search(csv_path, target_field,
+                       target_metric=None,
                        framework='tensorflow',
                        model_name='automl',
                        context='standalone',
@@ -38,7 +39,7 @@ object_cols = [col for col, col_type in df.dtypes.iteritems() if col_type == 'ob
 df[object_cols] = df[object_cols].apply(pd.to_datetime, errors='ignore')
 
 problem_type, target_metric, direction = get_problem_config(
-    df[target_field], framework, **kwargs)
+    df[target_field], framework, target_metric)
 input_types = get_input_types(df, col_types, target_field)
 hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
 fields = normalize_col_names(input_types)

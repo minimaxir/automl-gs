@@ -4,6 +4,7 @@ base:
   base_lr:   # base learning rate for the model optimizer
     type: base
     hyperparams:
+      - !!float 1e-1
       - !!float 1e-2
       - !!float 1e-3
       - !!float 1e-4

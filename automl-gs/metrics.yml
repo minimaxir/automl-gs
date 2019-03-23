@@ -35,6 +35,10 @@ r_2:
 
 # Binary/Classification Metrics
 
+log_loss:
+  full_name: Log Loss
+  abbr: Log Loss
+  objective: min
 categorical_crossentropy:
   full_name: Categorical Loss
   abbr: Categorical Loss
