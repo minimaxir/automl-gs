@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
+import os
 import pandas as pd
 from jinja2 import Environment, PackageLoader
 from tqdm import tqdm
 from datetime import datetime
-import os
 import shutil
 import uuid
-from utils_automl import *
+import argparse
+from .utils_automl import *
 
 
 def automl_grid_search(csv_path, target_field,
@@ -41,7 +42,7 @@ def automl_grid_search(csv_path, target_field,
     problem_type, target_metric, direction = get_problem_config(
         df[target_field], framework, target_metric)
     input_types = get_input_types(df, col_types, target_field)
-    hp_grid = build_hp_grid(framework, input_types.values(), num_trials)
+    hp_grid = build_hp_grid(framework, set(input_types.values()), num_trials, problem_type)
     fields = normalize_col_names(input_types)
 
     metrics_csv = open("automl_results.csv", 'w')
@@ -106,3 +107,29 @@ def automl_grid_search(csv_path, target_field,
 
     metrics_csv.close()
     pbar.close()
+
+def cmd():
+    """Function called when invoking from the terminal."""
+
+    parser = argparse.ArgumentParser(
+        description="Provide an input CSV and a target field to predict, generate a model + code to run it. (https://github.com/minimaxir/automl-gs)"
+    )
+
+
+
+    # Explicit arguments
+    parser.add_argument(
+        '--csv_path',  help='Path to the CSV file (must be in the current directory) [Required]', nargs='?')
+    parser.add_argument(
+        '--target_field',  help="Target field to predict [Required]",
+        nargs='?')
+
+    # Positional arguments
+    parser.add_argument('csv_path', nargs='?')
+    parser.add_argument('target_field', nargs='?')
+
+    args = parser.parse_args()
+    print(args)
+    # automl_grid_search(args)
+
+

@@ -42,18 +42,24 @@ pip3 install automl_gs
 
 You will also need to install the corresponding ML/DL framework (e.g. `tensorflow`/`tensorflow-gpu` for TensorFlow, `xgboost` for xgboost, etc.)
 
-After that, you can run it directly from the command line:
+After that, you can run it directly from the command line. For example, with the [famous Titanic dataset](http://web.stanford.edu/class/archive/cs/cs109/cs109.1166/problem12.html):
 
 ```shell
-automl_gs data.csv target
+automl_gs titanic.csv Survived
 ```
 
-You may also invoke it directly from Python. (e.g. via a Jupyter Notebook)
+If you want to use a different framework or configure the training, you can do it with flags:
+
+```shell
+automl_gs titanic.csv Survived --framework xgboost --num_trials 1000
+```
+
+You may also invoke automl-gs directly from Python. (e.g. via a Jupyter Notebook)
 
 ```python
 from automl_gs import automl_grid_search
 
-automl_grid_search('data.csv', 'target')
+automl_grid_search('titanic.csv', 'Survived')
 ```
 
 The output of the automl-gs training is:

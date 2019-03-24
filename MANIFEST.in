@@ -1,4 +1,10 @@
-exclude *.csv
-exclude test*
-exclude *.pyc
-prune test
+exclude .DS_Store
+exclude .*
+exclude */*.csv
+exclude */test*
+exclude */*.pyc
+exclude */testall.py
+exclude */tqdmtest.py
+include */*.yml
+prune */test
+graft */templates
