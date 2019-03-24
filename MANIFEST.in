@@ -1,0 +1,4 @@
+exclude *.csv
+exclude test*
+exclude *.pyc
+prune test

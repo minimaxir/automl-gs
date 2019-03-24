@@ -34,6 +34,9 @@ setup(
     keywords=['deep learning', 'tensorflow', 'keras', 'automl', 'xgboost'],
     classifiers=[],
     license='MIT',
+    entry_points = {
+        'automl_gs': ['automl-gs=automl_gs.automl_gs:automl_grid_search']
+    },
     python_requires='>=3.5',
     include_package_data=True,
     install_requires=['pandas', 'scikit-learn', 'autopep8', 'tqdm', 'jinja2>=2.8']
