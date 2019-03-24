@@ -141,7 +141,7 @@ def build_hp_grid(framework, types, num_trials,
 
 
 def print_progress_tqdm(hps, metrics, pbar, clear=True):
-    """Custom writer for tqdm which prints winning metrics and hyperparameters
+    """Custom writer for tqdm which prints winning metrics
     to console after each iteration.
 
     Uses a hack for tqdm.write(): https://github.com/tqdm/tqdm/issues/520
@@ -153,12 +153,14 @@ def print_progress_tqdm(hps, metrics, pbar, clear=True):
         clear: if writing should clear existing output
     """
 
-    hp_str = '\n'.join(['{}: {}'.format(k, v) for k, v in hps.items()])
+    # hp_str = '\n'.join(['{}: {}'.format(k, v) for k, v in hps.items()])
     metrics_str = '\n'.join(['{}: {}'.format(k, v) for k, v in metrics.items()
                              if k not in hps.keys()])
 
-    console_str = ("\nHyperparameters:\n" + hp_str + "\n" +
-                   "\nMetrics:\n" + metrics_str)
+    # console_str = ("\nHyperparameters:\n" + hp_str + "\n" +
+    #              "\nMetrics:\n" + metrics_str)
+
+    console_str = "\nMetrics:\n" + metrics_str
 
     # Print to console, removing appropriate number of lines
     if clear:
