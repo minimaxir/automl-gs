@@ -21,7 +21,7 @@ class meta_callback(Callback):
         y_true = self.y_val
         y_pred = self.model.predict(self.X_val)
 
-        {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
+        {% include 'callbacks/problem_types/' ~ problem_type %}
 
         time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.utcnow())
         self.w.writerow([epoch+1, time_completed] + metrics)

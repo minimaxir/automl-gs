@@ -1,4 +1,4 @@
-{% include 'models/tensorflow/mlp-' ~ params['mlp_activation'] ~ '.py' %}
+{% include 'models/tensorflow/mlp-' ~ params['mlp_activation'] %}
         
     {% if problem_type == 'regression' %}
     output = Dense(1, name="output", kernel_regularizer={{ params['output_regularizer'] }})(hidden)

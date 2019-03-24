@@ -1,4 +1,4 @@
-{% include 'imports/pipeline.py' %}
+{% include 'imports/pipeline' %}
 
 {% if framework == 'tensorflow' %}
 def build_model(encoders):
@@ -12,12 +12,12 @@ def build_model(encoders):
     """
 
 {% if has_text_input %}
-{% include 'models/' ~ text_framework ~ '/text.py' %}
+{% include 'models/' ~ text_framework ~ '/text' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
-{% include 'models/' ~ framework ~ '/' ~ field_type ~ '.py' %}
+{% include 'models/' ~ framework ~ '/' ~ field_type %}
 
 {% endif %}
 {% endfor %}
@@ -41,14 +41,14 @@ def build_model(encoders):
         {% endfor %}
     ], name="concat")
 
-{% include 'models/' ~ framework ~ '/mlp.py' %}
+{% include 'models/' ~ framework ~ '/mlp' %}
 
     # Build and compile the model.
     model = Model(inputs=[
         {% for field, _, field_type in nontarget_fields %}
         {% if field_type != 'datetime' and field != target_field %}
         input_{{ field }}{{ ", " if not loop.last }}
-        {% elif field != target_field  %}
+        {% elif field != target_field %}
         input_dayofweeks_{{ field }},
         input_hours_{{ field }}{{ ", " if not loop.last and not (params['datetime_month'] or params['datetime_year'])}}
         {% if params['datetime_month'] %}
@@ -62,7 +62,7 @@ def build_model(encoders):
                 ],
                       outputs=[output])
 
-    model.compile(loss={% include 'models/' ~ framework ~ '/loss.py' %},
+    model.compile(loss={% include 'models/' ~ framework ~ '/loss' %},
               optimizer=AdamWOptimizer(learning_rate = {{ params['base_lr'] }},
                                         weight_decay = {{ params['weight_decay'] }}))
 
@@ -81,17 +81,17 @@ def build_encoders(df):
     """
 
 {% if has_text_input %}
-{% include 'encoders/' ~ text_framework ~ '-text.py' %}
+{% include 'encoders/' ~ text_framework ~ '-text' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
-{% include 'encoders/' ~ field_type ~ '.py' %}
+{% include 'encoders/' ~ field_type %}
 
 {% endif %}
 
 {% endfor %}
-{% include 'encoders/target.py' %}
+{% include 'encoders/target' %}
 
 def load_encoders():
     """Loads the encoders built during `build_encoders`.
@@ -103,17 +103,17 @@ def load_encoders():
     encoders = {}
 
 {% if has_text_input %}
-{% include 'loaders/' ~ text_framework ~ '-text.py' %}
+{% include 'loaders/' ~ text_framework ~ '-text' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
-{% include 'loaders/' ~ field_type ~ '.py' %}
+{% include 'loaders/' ~ field_type %}
 
 {% endif %}
 
 {% endfor %}
-{% include 'loaders/target.py' %}
+{% include 'loaders/target' %}
 
     return encoders
 
@@ -135,12 +135,12 @@ def process_data(df, encoders, process_target=True):
     """
 
 {% if has_text_input %}
-{% include 'processors/' ~ text_framework ~ '-text.py' %}
+{% include 'processors/' ~ text_framework ~ '-text' %}
 {% endif %}
 
 {% for field, field_raw, field_type in nontarget_fields %}
 {% if field_type != 'text' %}
-{% include 'processors/' ~ field_type ~ '.py' %}
+{% include 'processors/' ~ field_type %}
 {% endif %}
 
 {% endfor %}
@@ -162,7 +162,7 @@ def process_data(df, encoders, process_target=True):
         ]
 
     if process_target:
-{% include 'processors/target.py' %}
+{% include 'processors/target' %}
         return (data_enc, {{ target_field }}_enc)
 
     return data_enc
@@ -257,7 +257,7 @@ def model_train(df, encoders, args, model=None):
         'subsample': {{ params['subsample'] }},
         'colsample_bytree': {{ params['colsample_bytree'] }},
         'max_bin': {{ params['max_bin'] }},
-        'objective': {% include 'models/' ~ framework ~ '/loss.py' %}
+        'objective': {% include 'models/' ~ framework ~ '/loss' %}
         'tree_method': {% if gpu %}'gpu_hist'{% else %}'hist'{% endif %},
         'silent': 1
     }
@@ -272,7 +272,7 @@ def model_train(df, encoders, args, model=None):
                           xgb_model=model if epoch > 0 else None)
         y_pred = model.predict(val)
 
-        {% include 'callbacks/problem_types/' ~ problem_type ~ '.py' %}
+        {% include 'callbacks/problem_types/' ~ problem_type %}
 
         time_completed = "{:%Y-%m-%d %H:%M:%S}".format(datetime.utcnow())
         w.writerow([epoch+1, time_completed] + metrics)
@@ -286,6 +286,6 @@ def model_train(df, encoders, args, model=None):
     {% endif %}
 
 {% if framework == 'tensorflow' %}
-{% include 'callbacks/tensorflow.py' %}
+{% include 'callbacks/tensorflow' %}
 {% endif %}
 

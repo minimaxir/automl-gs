@@ -196,7 +196,7 @@ def render_model(params, model_name, framework, env, problem_type,
         metrics = yaml.load(f)[problem_type]
 
     for file in files:
-        script = env.get_template('scripts/' + file).render(
+        script = env.get_template('scripts/' + file.replace('.py', '')).render(
             params=params,
             model_name=model_name,
             framework=framework,
