@@ -3,7 +3,7 @@
 import os
 import pandas as pd
 from jinja2 import Environment, PackageLoader
-from tqdm import tqdm
+from tqdm import tqdm, tqdm_notebook
 from datetime import datetime
 import shutil
 import uuid
@@ -52,7 +52,15 @@ def automl_grid_search(csv_path, target_field,
     train_folder = "{}_train".format(model_name)
     cmd = build_subprocess_cmd(csv_path, train_folder)
 
-    pbar = tqdm(hp_grid, smoothing=0, unit='trial')
+
+    
+    # https://stackoverflow.com/a/39662359
+    is_notebook = get_ipython().__class__.__name__ in ['ZMQInteractiveShell',
+                                                       'google.colab._shell']
+
+    pbar_func = tqdm_notebook if is_notebook else tqdm
+    pbar = pbar_func(hp_grid, smoothing=0, unit='trial')
+    
     for params in pbar:
 
         # Create destination folders for the model scripts + metadata
@@ -68,7 +76,7 @@ def automl_grid_search(csv_path, target_field,
                     train_folder, fields, split, num_epochs, gpu, tpu_address)
 
         # Execute model training using the generated files.
-        train_generated_model(cmd, num_epochs, train_folder)
+        train_generated_model(cmd, num_epochs, train_folder, is_notebook)
 
         # Load the training results from the generated CSV,
         # and append to the metrics CSV.
@@ -92,7 +100,8 @@ def automl_grid_search(csv_path, target_field,
             if best_result is None:   # if first iteration
                 best_result = top_result
                 shutil.copytree(train_folder, best_folder)
-                print_progress_tqdm(params, train_results, pbar, False)
+                print_progress_tqdm(params, train_results,
+                                    pbar, is_notebook, False)
             else:
                 is_imp = top_result > best_result
                 is_imp = not is_imp if direction == 'min' else is_imp
@@ -100,7 +109,8 @@ def automl_grid_search(csv_path, target_field,
                     best_result = top_result
                     shutil.rmtree(best_folder)
                     shutil.copytree(train_folder, best_folder)
-                    print_progress_tqdm(params, train_results, pbar)
+                    print_progress_tqdm(params, train_results,
+                                        pbar, is_notebook)
 
         # Clean up the generated file folder for the next trial.
         shutil.rmtree(train_folder)

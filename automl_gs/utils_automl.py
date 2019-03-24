@@ -4,7 +4,7 @@ import random
 import yaml
 import os
 from pkg_resources import resource_filename
-from tqdm import tqdm
+from tqdm import tqdm, tqdm_notebook
 from tqdm._utils import _term_move_up
 from subprocess import Popen, PIPE, DEVNULL, CalledProcessError
 from autopep8 import fix_code
@@ -140,7 +140,7 @@ def build_hp_grid(framework, types, num_trials,
     return grid_params
 
 
-def print_progress_tqdm(hps, metrics, pbar, clear=True):
+def print_progress_tqdm(hps, metrics, pbar, is_notebook, clear=True):
     """Custom writer for tqdm which prints winning metrics
     to console after each iteration.
 
@@ -150,6 +150,7 @@ def print_progress_tqdm(hps, metrics, pbar, clear=True):
         hps: dict of hyperparameters
         metrics: dict of hyperparameters+metrics
         pbar: a tqdm progressbar
+        is_notebook: boolean if automl-gs is running in a Notebook.
         clear: if writing should clear existing output
     """
 
@@ -163,8 +164,9 @@ def print_progress_tqdm(hps, metrics, pbar, clear=True):
     console_str = "\nMetrics:\n" + metrics_str
 
     # Print to console, removing appropriate number of lines
+    move_up_char = '' if is_notebook else _term_move_up()
     if clear:
-        pbar.write("".join([_term_move_up()] * (console_str.count('\n') + 2)))
+        pbar.write("".join([move_up_char] * (console_str.count('\n') + 2)))
 
     pbar.write(console_str)
 
@@ -291,7 +293,7 @@ def build_subprocess_cmd(csv_path, train_folder):
             "-c", "automl-gs"]
 
 
-def train_generated_model(cmd, num_epochs, train_folder):
+def train_generated_model(cmd, num_epochs, train_folder, is_notebook):
     """Trains a generated model script in a Python subprocess,
        and maintains a progress bar of the subprocess training.
 
@@ -302,18 +304,21 @@ def train_generated_model(cmd, num_epochs, train_folder):
         cmd: A generate command
         num_epochs: number of epochs
         train_folder: subfolder where the training occurs.
+        is_notebook: boolean if automl-gs is running in a Notebook.
     """
 
     p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
               universal_newlines=True) 
+
+    pbar_func = tqdm_notebook if is_notebook else tqdm
+    t = pbar_func(total=num_epochs, leave=False, smoothing=0, unit='epoch')
     
-    with tqdm(total=num_epochs, leave=False,
-              smoothing=0, unit='epoch') as t:
-        for line in iter(p.stdout.readline, ""):
-            if line == "EPOCH_END\n":
-                t.update(1)
+    for line in iter(p.stdout.readline, ""):
+        if line == "EPOCH_END\n":
+            t.update(1)
     
     if p.returncode is not None:
         raise CalledProcessError(p.returncode, p.args)
-    
+
+    t.close()
     p.stdout.close()
