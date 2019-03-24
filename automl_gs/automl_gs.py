@@ -55,8 +55,11 @@ def automl_grid_search(csv_path, target_field,
 
     
     # https://stackoverflow.com/a/39662359
-    is_notebook = get_ipython().__class__.__name__ in ['ZMQInteractiveShell',
-                                                       'google.colab._shell']
+    try:
+        is_notebook = get_ipython().__class__.__name__ in ['ZMQInteractiveShell',
+                                                           'google.colab._shell']
+    except:
+        is_notebook = False
 
     pbar_func = tqdm_notebook if is_notebook else tqdm
     pbar = pbar_func(hp_grid, smoothing=0, unit='trial')

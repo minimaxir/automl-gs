@@ -310,15 +310,17 @@ def train_generated_model(cmd, num_epochs, train_folder, is_notebook):
     p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
               universal_newlines=True) 
 
-    pbar_func = tqdm_notebook if is_notebook else tqdm
-    t = pbar_func(total=num_epochs, leave=False, smoothing=0, unit='epoch')
-    
+    if not is_notebook:
+        pbar_func = tqdm_notebook if is_notebook else tqdm
+        t = pbar_func(total=num_epochs, leave=False, smoothing=0, unit='epoch')
+        
     for line in iter(p.stdout.readline, ""):
-        if line == "EPOCH_END\n":
+        if line == "EPOCH_END\n" and not is_notebook:
             t.update(1)
-    
+
+    if not is_notebook:
+        t.close()
+
     if p.returncode is not None:
         raise CalledProcessError(p.returncode, p.args)
-
-    t.close()
     p.stdout.close()
