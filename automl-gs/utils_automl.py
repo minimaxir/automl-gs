@@ -162,10 +162,9 @@ def print_progress_tqdm(hps, metrics, pbar, clear=True):
 
     # Print to console, removing appropriate number of lines
     if clear:
-        pbar.write("".join([_term_move_up()] *
-                    console_str.count('\n') + [console_str]))
-    else:
-        pbar.write(console_str)
+        pbar.write("".join([_term_move_up()] * (console_str.count('\n') + 2)))
+
+    pbar.write(console_str)
 
 
 def render_model(params, model_name, framework, env, problem_type, 
