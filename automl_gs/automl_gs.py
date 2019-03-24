@@ -63,6 +63,8 @@ def automl_grid_search(csv_path, target_field,
 
     pbar_func = tqdm_notebook if is_notebook else tqdm
     pbar = pbar_func(hp_grid, smoothing=0, unit='trial')
+    pbar_sub = pbar_func(total=num_epochs, leave=False,
+                         smoothing=0, unit='epoch')
     
     for params in pbar:
 
@@ -79,7 +81,7 @@ def automl_grid_search(csv_path, target_field,
                     train_folder, fields, split, num_epochs, gpu, tpu_address)
 
         # Execute model training using the generated files.
-        train_generated_model(cmd, num_epochs, train_folder, is_notebook)
+        train_generated_model(cmd, num_epochs, train_folder, pbar_sub)
 
         # Load the training results from the generated CSV,
         # and append to the metrics CSV.
@@ -120,6 +122,7 @@ def automl_grid_search(csv_path, target_field,
 
     metrics_csv.close()
     pbar.close()
+    pbar_sub.close()
 
 def cmd():
     """Function called when invoking from the terminal."""

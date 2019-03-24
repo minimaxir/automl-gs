@@ -3,6 +3,7 @@ import pandas as pd
 import random
 import yaml
 import os
+from time import time
 from pkg_resources import resource_filename
 from tqdm import tqdm, tqdm_notebook
 from tqdm._utils import _term_move_up
@@ -293,7 +294,7 @@ def build_subprocess_cmd(csv_path, train_folder):
             "-c", "automl-gs"]
 
 
-def train_generated_model(cmd, num_epochs, train_folder, is_notebook):
+def train_generated_model(cmd, num_epochs, train_folder, pbar_sub):
     """Trains a generated model script in a Python subprocess,
        and maintains a progress bar of the subprocess training.
 
@@ -304,23 +305,25 @@ def train_generated_model(cmd, num_epochs, train_folder, is_notebook):
         cmd: A generate command
         num_epochs: number of epochs
         train_folder: subfolder where the training occurs.
-        is_notebook: boolean if automl-gs is running in a Notebook.
+        pbar_sub: tqdm progress bar for the subprocess
     """
 
     p = Popen(cmd, cwd=train_folder, stdout=PIPE, bufsize=1,
               universal_newlines=True) 
-
-    if not is_notebook:
-        pbar_func = tqdm_notebook if is_notebook else tqdm
-        t = pbar_func(total=num_epochs, leave=False, smoothing=0, unit='epoch')
         
     for line in iter(p.stdout.readline, ""):
-        if line == "EPOCH_END\n" and not is_notebook:
-            t.update(1)
-
-    if not is_notebook:
-        t.close()
+        if line == "EPOCH_END\n":
+            pbar_sub.update(1)
 
     if p.returncode is not None:
         raise CalledProcessError(p.returncode, p.args)
+
     p.stdout.close()
+
+    # Reset the subprogress bar without destroying it
+    # https://github.com/tqdm/tqdm/issues/545#issuecomment-471090550
+    pbar_sub.n = 0
+    pbar_sub.last_print_n = 0
+    pbar_sub.start_t = time()
+    pbar_sub.last_print_t = time()
+    pbar_sub.refresh()
