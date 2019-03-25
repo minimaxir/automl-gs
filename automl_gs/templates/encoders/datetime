@@ -6,14 +6,14 @@
     hour_encoder.classes_ = list(range(24))
 
     {% if params['datetime_month'] %}
-    {{ field }}_month = pd.to_datetime(df['{{ field }}']).dt.month - 1
+    {{ field }}_month = pd.to_datetime(df['{{ field_raw }}']).dt.month - 1
     month_encoder = LabelBinarizer()
     month_encoder.classes_ = list(range(12))
     {{ field }}_month = month_encoder.transform({{ field }}_month)
     {% endif %}
 
     {% if params['datetime_year'] %}
-    {{ field }}_year = pd.to_datetime(df['{{ field }}']).dt.year
+    {{ field }}_year = pd.to_datetime(df['{{ field_raw }}']).dt.year
     {{ field }}_year_encoder = LabelBinarizer()
     {{ field }}_year = {{ field }}_year_encoder.fit_transform({{ field }}_year)
 
