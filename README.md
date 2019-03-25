@@ -101,6 +101,12 @@ python3 model.py -d data.csv -m train
 * `gpu`: For non-Tensorflow frameworks and Pascal-or-later GPUs, boolean to determine whether to use GPU-optimized training methods (TensorFlow can detect it automatically) [Default: False]
 * `tpu_address`: For TensorFlow, hardware address of the TPU on the system. [Default: None]
 
+## Examples
+
+For a quick Hello World on how to use automl-gs, see [this Jupyter Notebook](docs/automl_gs_tutorial.ipynb).
+
+Due to the size of some examples w/ generated code and accompanying data visualizations, they are present in a separate reposity.
+
 ## How automl-gs Works
 
 TL;DR: auto-ml gs generates raw Python code using Jinja templates and trains a model using the generated code in a subprocess: repeat using different hyperparameters until done and save the best model.
