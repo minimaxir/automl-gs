@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import os
 import pandas as pd
 from jinja2 import Environment, PackageLoader
@@ -139,13 +137,39 @@ def cmd():
     parser.add_argument(
         '--target_field',  help="Target field to predict [Required]",
         nargs='?')
+    parser.add_argument(
+        '--target_metric',  help='Target metric to optimize [Default: Automatically determined depending on problem type]', nargs='?', default=None)
+    parser.add_argument(
+        '--framework',  help='Machine learning framework to use [Default: tensorflow]', nargs='?', default='tensorflow')
+    parser.add_argument(
+        '--model_name',  help=" Name of the model (if you want to train models with different names) [Default: 'automl']",
+        nargs='?', default='automl')
+    parser.add_argument(
+        '--num_trials',  help='Number of trials / different hyperameter combos to test. [Default: 100]', nargs='?', type=int, default=100)
+    parser.add_argument(
+        '--split',  help="Train-val split when training the models [Default: 0.7]",
+        nargs='?', type=float, default=0.7)
+    parser.add_argument(
+        '--num_epochs',  help='Number of epochs / passes through the data when training the models. [Default: 20]', type=int, default=20)
+    parser.add_argument(
+        '--gpu',  help="For non-Tensorflow frameworks and Pascal-or-later GPUs, boolean to determine whether to use GPU-optimized training methods (TensorFlow can detect it automatically) [Default: False]",
+        nargs='?', type=bool, default=False)
+    parser.add_argument(
+        '--tpu_address',  help="For TensorFlow, hardware address of the TPU on the system. [Default: None]",
+        nargs='?', default=None)
 
     # Positional arguments
     parser.add_argument('csv_path', nargs='?')
     parser.add_argument('target_field', nargs='?')
 
     args = parser.parse_args()
-    print(args)
-    # automl_grid_search(args)
-
-
+    automl_grid_search(csv_path=args.csv_path,
+                       target_field=args.target_field,
+                       target_metric=args.target_metric,
+                       framework=args.framework,
+                       model_name=args.model_name,
+                       num_trials=args.num_trials,
+                       split=args.split,
+                       num_epochs=args.num_epochs,
+                       gpu=args.gpu,
+                       tpu_address=args.tpu_address)

@@ -1,6 +1,6 @@
 # automl-gs
 
-Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native code pipelines allowing you to integrate that model into any prediction workflow. No black box: you can see *exactly* how the data is processed, how the model is constructed, and you can make tweaks as necessary.
+Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native Python code pipelines allowing you to integrate that model into any prediction workflow. No black box: you can see *exactly* how the data is processed, how the model is constructed, and you can make tweaks as necessary.
 
 ![demo output](docs/demo-output.png)
 
@@ -95,8 +95,8 @@ python3 model.py -d data.csv -m train
 * `framework`: Machine learning framework to use [Default: 'tensorflow']
 * `model_name`: Name of the model (if you want to train models with different names) [Default: 'automl']
 * `num_trials`: Number of trials / different hyperameter combos to test. [Default: 100]
-* `split`: Train-val split when training the models [Default: 0.7]
-* `num_epochs`: Number of epochs / passes through the data when training the models.
+* `split`: Train-validation split when training the models [Default: 0.7]
+* `num_epochs`: Number of epochs / passes through the data when training the models. [Default: 20]
 * `col_types`: Dictionary of fields:data types to use to override automl-gs's guesses. (only when using in Python) [Default: {}]
 * `gpu`: For non-Tensorflow frameworks and Pascal-or-later GPUs, boolean to determine whether to use GPU-optimized training methods (TensorFlow can detect it automatically) [Default: False]
 * `tpu_address`: For TensorFlow, hardware address of the TPU on the system. [Default: None]
