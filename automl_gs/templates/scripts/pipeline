@@ -61,10 +61,14 @@ def build_model(encoders):
         {% endfor %}
                 ],
                       outputs=[output])
-
+    {% if not tpu_address %}
     model.compile(loss={% include 'models/' ~ framework ~ '/loss' %},
               optimizer=AdamWOptimizer(learning_rate = {{ params['base_lr'] }},
                                         weight_decay = {{ params['weight_decay'] }}))
+    {% else %}
+    model.compile(loss={% include 'models/' ~ framework ~ '/loss' %},
+              optimizer=AdamOptimizer(learning_rate = {{ params['base_lr'] }}))
+    {% endif %}
 
     return model
 {% endif %}
@@ -234,14 +238,15 @@ def model_train(df, encoders, args, model=None):
 
     {% if tpu_address %}
     if args.context == 'automl-gs':
-        model= tf.contrib.tpu.keras_to_tpu_model(model,
+        model = tf.contrib.tpu.keras_to_tpu_model(model,
                strategy=tf.contrib.tpu.TPUDistributionStrategy(
-               tf.contrib.cluster_resolver.TPUClusterResolver({{ tpu_address }})))
+               tf.contrib.cluster_resolver.TPUClusterResolver('{{ tpu_address }}')))
     {% endif %}
 
     model.fit(X_train, y_train, validation_data=(X_val, y_val),
                 epochs=args.epochs,
-                callbacks=[meta])
+                callbacks=[meta],
+                batch_size={{ params['batch_size'] }}{% if tpu_address %}* 8{% endif %})
     {% endif %}
 
     {% if framework == 'xgboost' %}

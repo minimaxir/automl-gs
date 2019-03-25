@@ -19,7 +19,11 @@ class meta_callback(Callback):
 
     def on_epoch_end(self, epoch, logs={}):
         y_true = self.y_val
+        {% if tpu_address %}
+        y_pred = self.model.sync_to_cpu().predict(self.X_val)
+        {% else %}
         y_pred = self.model.predict(self.X_val)
+        {% endif %}
 
         {% include 'callbacks/problem_types/' ~ problem_type %}
 

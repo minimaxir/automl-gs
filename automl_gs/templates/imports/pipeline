@@ -21,7 +21,7 @@ from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Embedding, SpatialDropout1D, LSTM, CuDNNLSTM, GRU, CuDNNGRU, concatenate, Dense, BatchNormalization, Dropout, AlphaDropout
 from tensorflow.keras import backend as K
 from tensorflow.contrib.opt import AdamWOptimizer
-from tensorflow.train import cosine_decay
+from tensorflow.train import cosine_decay, AdamOptimizer
 {% endif %}
 {% if framework != 'tensorflow' %}
 from sklearn.feature_extraction.text import CountVectorizer

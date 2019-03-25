@@ -55,7 +55,7 @@ def automl_grid_search(csv_path, target_field,
     # https://stackoverflow.com/a/39662359
     try:
         is_notebook = get_ipython().__class__.__name__ in ['ZMQInteractiveShell',
-                                                           'google.colab._shell']
+                                                           'Shell']
     except:
         is_notebook = False
 
