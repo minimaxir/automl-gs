@@ -3,10 +3,10 @@
 
 regression:
   ['mse', 'mae', 'r_2']
-binary_classification:
+binary_classification:   # uses macro averaging when available
   ['log_loss', 'accuracy', 'auc', 'precision', 'recall',
   'f1']
-classification:
+classification:   # uses micro averaging when available
   ['log_loss', 'accuracy', 'precision', 'recall',
   'f1',]
 
