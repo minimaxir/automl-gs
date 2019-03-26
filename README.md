@@ -136,21 +136,18 @@ Feature development will continue on automl-gs as long as there is interest in t
 * Add more frameworks
 * Results visualization (via `plotnine`)
 * Holiday support for datetimes
-* Fix redundant code (both parent and generated code)
+* Remove redundant generated code
 * Native distributed/high level automation support (Polyaxon/Kubernetes, Airflow)
 * Image field support (both as a CSV column field, and a special flow mode to take advantage of hyperparameter tuning)
-* PyTorch model generation.
+* PyTorch model code generation.
 
 ### Elsework
 
 * Generate script given an explicit set of hyperparameters
-* Expand on the hyperparameters.
+* More hyperparameters.
 * Bayesian hyperparameter search for standalone version.
-* Training results visualization after completion.
-* Support for generating model code for R.
-* Localization (for generated code comments)
+* Support for generating model code for R/Julia
 * Tool for generating a Flask/Starlette REST API from a trained model script
-* Secondary progress bars for epoch progress in each trial.
 * Allow passing an explicit, pre-defined test set CSV.
 
 ## Maintainer/Creator
