@@ -1,5 +1,7 @@
 # automl-gs
 
+![console gif](docs/console-demo.gif)
+
 Give an input CSV file and a target field you want to predict to automl-gs, and get a trained high-performing machine learning or deep learning model plus native Python code pipelines allowing you to integrate that model into any prediction workflow. No black box: you can see *exactly* how the data is processed, how the model is constructed, and you can make tweaks as necessary.
 
 ![demo output](docs/demo-output.png)
