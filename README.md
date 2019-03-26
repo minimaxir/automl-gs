@@ -105,9 +105,11 @@ python3 model.py -d data.csv -m train
 
 ## Examples
 
+![](https://github.com/minimaxir/automl-gs-examples/blob/master/titanic/all_titanic.png?raw=true)
+
 For a quick Hello World on how to use automl-gs, see [this Jupyter Notebook](docs/automl_gs_tutorial.ipynb).
 
-Due to the size of some examples w/ generated code and accompanying data visualizations, they are present in a separate reposity.
+Due to the size of some examples w/ generated code and accompanying data visualizations, they are maintained in a [separate repository](https://github.com/minimaxir/automl-gs-examples). (and also explain why there are two distinct "levels" in the example viz above!)
 
 ## How automl-gs Works
 
