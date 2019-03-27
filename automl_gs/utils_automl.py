@@ -36,7 +36,7 @@ def get_input_types(df, col_types, target_field):
     for field in fields:
         if field in col_types:
             field_types[field] = col_types[field]
-            next
+            continue
         field_type = df[field].dtype
         num_unique_values = df[field].nunique()
         if field_type == 'object':
