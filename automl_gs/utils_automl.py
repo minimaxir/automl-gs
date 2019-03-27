@@ -123,7 +123,7 @@ def build_hp_grid(framework, types, num_trials,
     """
 
     with open(hp_path) as f:
-        hps = yaml.load(f)
+        hps = yaml.load(f, Loader=yaml.FullLoader)
 
     # Refine hyperparameters by only using ones relevant to
     # the data and framework of choice
@@ -196,7 +196,7 @@ def render_model(params, model_name, framework, env, problem_type,
     text_framework = 'tensorflow' if framework == 'tensorflow' else 'sklearn'
 
     with open(metrics_path) as f:
-        metrics = yaml.load(f)[problem_type]
+        metrics = yaml.load(f, Loader=yaml.FullLoader)[problem_type]
 
     for file in files:
         script = env.get_template('scripts/' + file.replace('.py', '')).render(
@@ -267,7 +267,7 @@ def get_problem_config(target_data,
 
     # Direction
     with open(metrics_path) as f:
-        metrics = yaml.load(f)
+        metrics = yaml.load(f, Loader=yaml.FullLoader)
 
     direction = metrics[target_metric]['objective']
     direction_text = 'minimizing' if direction == 'min' else 'maximizing'
