@@ -12,7 +12,7 @@ Nowadays, the cost of computing many different models and hyperparameters is muc
 
 * Generates native Python code; no platform lock-in, and no need to use automl-gs after the model script is created.
 * Train model configurations super-fast *for free* using a **TPU** and TensorFlow in Google Colaboratory. (in Beta: you can access the Colaboratory notebook [here](https://colab.research.google.com/drive/1sbF8cqnOsdzN9Bdt74eER5s_xXcdvatV)).
-* Handles messy datasets that normally require manual intervention, such as datetime/categorical encoding and spaced/parathesized column names.
+* Handles messy datasets that normally require manual intervention, such as datetime/categorical encoding and spaced/parenthesized column names.
 * Each part of the generated model pipeline is its own function w/ docstrings, making it much easier to integrate into production workflows.
 * Extremely detailed metrics reporting for every trial stored in a tidy CSV, allowing you to identify and visualize model strengths and weaknesses.
 * Correct serialization of data pipeline encoders on disk (i.e. no pickled Python objects!)
@@ -72,7 +72,7 @@ The output of the automl-gs training is:
   * `model.py`: The generated model file.
   * `pipeline.py`: The generated pipeline file.
   * `requirements.txt`: The generated requirements file.
-  * `/encoders`: A folder containing JSON-seralized encoder files
+  * `/encoders`: A folder containing JSON-serialized encoder files
   * `/metadata`: A folder containing training statistics + other cool stuff not yet implemented!
   * The model itself (format depends on framework)
 * `automl_results.csv`: A CSV containing the training results after each epoch and the hyperparameters used to train at that time.
@@ -100,7 +100,7 @@ You can view these at any time by running `automl_gs -h` in the command line.
 * `target_metric`: Target metric to optimize [Default: Automatically determined depending on problem type]
 * `framework`: Machine learning framework to use [Default: 'tensorflow']
 * `model_name`: Name of the model (if you want to train models with different names) [Default: 'automl']
-* `num_trials`: Number of trials / different hyperameter combos to test. [Default: 100]
+* `num_trials`: Number of trials / different hyperparameter combos to test. [Default: 100]
 * `split`: Train-validation split when training the models [Default: 0.7]
 * `num_epochs`: Number of epochs / passes through the data when training the models. [Default: 20]
 * `col_types`: Dictionary of fields:data types to use to override automl-gs's guesses. (only when using in Python) [Default: {}]
@@ -127,8 +127,8 @@ The best model Python script is kept after each trial, which can then easily be 
 
 ## Helpful Notes
 
-* *It is the user's responsibility to ensure the input dataset is high-quality.* No model hyperparameter search will provide good research on flawed/unbalanced datasets. Relatedly, hyperparameter optimization may provide optimistic predictions on the validation set, which may not necessairly match the model performance in the real world.
-* *A neural network approach alone may not necessairly be the best approach*. Try using `xgboost`. The results may surprise you!
+* *It is the user's responsibility to ensure the input dataset is high-quality.* No model hyperparameter search will provide good research on flawed/unbalanced datasets. Relatedly, hyperparameter optimization may provide optimistic predictions on the validation set, which may not necessarily match the model performance in the real world.
+* *A neural network approach alone may not necessarily be the best approach*. Try using `xgboost`. The results may surprise you!
 * *automl-gs is only attempting to solve tabular data problems.* If you have a more complicated problem to solve (e.g. predicting a sequence of outputs), I recommend using Microsoft's [NNI](https://github.com/Microsoft/nni) and Uber's [Ludwig](https://github.com/uber/ludwig) as noted in the introduction.
 
 ## Future Work
