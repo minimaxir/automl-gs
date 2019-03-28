@@ -123,7 +123,7 @@ def build_hp_grid(framework, types, num_trials,
     """
 
     with open(hp_path) as f:
-        hps = yaml.load(f)
+        hps = yaml.load(f, Loader=yaml.FullLoader)
 
     # Refine hyperparameters by only using ones relevant to
     # the data and framework of choice
