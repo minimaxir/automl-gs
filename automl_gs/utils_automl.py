@@ -3,6 +3,7 @@ import pandas as pd
 import random
 import yaml
 import os
+import shutil
 from time import time
 from pkg_resources import resource_filename
 from tqdm import tqdm, tqdm_notebook
@@ -288,7 +289,17 @@ def build_subprocess_cmd(csv_path, train_folder):
 
     csv_path_join = os.path.join('..', csv_path)
 
-    return ["python3", "model.py",
+    # Find the python executable
+    if shutil.which('python3') is not None:
+        pycmd = shutil.which('python3')
+    elif shutil.which('python'):
+        # fall back to regular python, which may be py3
+        pycmd = shutil.which('python')
+    else:
+        # might be a better exception for this
+        raise Exception("error: unable to locate the python binary for the subprocess call")
+
+    return [pycmd, "model.py",
             "-d", csv_path_join,
             "-m", "train",
             "-c", "automl-gs"]
