@@ -1,1 +1,7 @@
 .vscode
+*.pyc
+automl_train/*
+automl_results.csv
+*checkpoint.ipynb
+/automl_tensorflow_*
+/automl_xgboost_*
