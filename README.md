@@ -131,6 +131,12 @@ The best model Python script is kept after each trial, which can then easily be 
 * *A neural network approach alone may not necessarily be the best approach*. Try using `xgboost`. The results may surprise you!
 * *automl-gs is only attempting to solve tabular data problems.* If you have a more complicated problem to solve (e.g. predicting a sequence of outputs), I recommend using Microsoft's [NNI](https://github.com/Microsoft/nni) and Uber's [Ludwig](https://github.com/uber/ludwig) as noted in the introduction.
 
+## Known Issues
+
+* Issues when using Anaconda ([#8](https://github.com/minimaxir/automl-gs/issues/8)). Use an installed Python is possible.
+* Issues when using Windows ([#13](https://github.com/minimaxir/automl-gs/issues/13))
+* Issues when a field name in the input dataset starts with a number ([#18](https://github.com/minimaxir/automl-gs/issues/18))
+
 ## Future Work
 
 Feature development will continue on automl-gs as long as there is interest in the package.
