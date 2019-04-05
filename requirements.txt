@@ -1,2 +1,6 @@
-tensorflow
+pandas
+scikit-learn
+autopep8
+tqdm
+jinja2>=2.8
 pyyaml
